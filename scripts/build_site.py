@@ -432,6 +432,16 @@ python3 scripts/run_agent.py --model anthropic/claude-opus-4.8 --seed 101
 <span class="cmt"># the full matrix, then regenerate figures + paper + this site</span>
 python3 scripts/run_experiments.py --exp exp2 --models ... --seeds 101,102,103
 python3 scripts/finalize.py --exp exp2</pre></div>
+
+    <h3 style="margin-top:2rem">Citation</h3>
+    <p>If you use PIBench, please cite it:</p>
+    <div class="console"><pre>@software{bao2026pibench,
+  title   = {PIBench: Can Agents Run a Research Lab?},
+  author  = {Bao, Zhiwei},
+  year    = {2026},
+  url     = {%%GITHUB%%},
+  version = {1.0.0}
+}</pre></div>
   </div>
 </section>
 
@@ -553,29 +563,45 @@ document.querySelectorAll('#c-cites .ctrl button').forEach(b=>b.onclick=()=>{
   b.classList.add('active'); citeScale=b.dataset.scale; drawCites(); });
 drawCites(); drawCiteLegend();
 
-/* ---------- strip plot: per-seed Impact on a log axis ---------- */
+/* ---------- range plot: per-seed Impact spread on a log axis ---------- */
 function drawStrip(){
   const box=$('c-strip'); box.querySelectorAll('svg').forEach(s=>s.remove());
-  const rows=[...P.traj.series].map(s=>({m:s.model,seeds:s.seedsImpact,ci:s.colorIndex}))
+  const rows=[...P.traj.series].map(s=>({m:s.model,seeds:[...s.seedsImpact].sort((a,b)=>a-b),ci:s.colorIndex}))
     .filter(r=>r.seeds&&r.seeds.length).sort((a,b)=>{
       const ma=a.seeds.reduce((x,y)=>x+y,0)/a.seeds.length, mb=b.seeds.reduce((x,y)=>x+y,0)/b.seeds.length; return mb-ma; });
-  const W=920, rh=30, mL=150, mR=24, mT=30, mB=24;
+  const W=920, rh=42, mL=150, mR=34, mT=34, mB=30, zoneW=30; // zoneW = a "0 / collapsed" lane left of x=1
   const H=mT+mB+rows.length*rh;
   let maxV=10; rows.forEach(r=>r.seeds.forEach(v=>maxV=Math.max(maxV,v)));
-  const lmax=Math.log10(maxV*1.3);
-  const px=v=>mL+(W-mL-mR)*(Math.log10(Math.max(1,v))/lmax);
+  const lmax=Math.log10(maxV*1.4);
+  const x1=mL+zoneW;                                   // where the log axis (value 1) begins
+  const px=v=> v<1 ? mL+zoneW*0.5 : x1+(W-x1-mR)*(Math.log10(v)/lmax);
   const svg=el('svg',{viewBox:`0 0 ${W} ${H}`});
-  [1,10,100,1000,10000].filter(t=>t<=maxV*1.3).forEach(t=>{ const x=px(t);
-    svg.appendChild(el('line',{class:'grid',x1:x,y1:mT-6,x2:x,y2:H-mB}));
-    const tk=el('text',{class:'tick',x:x,y:mT-10,'text-anchor':'middle'}); tk.textContent=t>=1000?(t/1000)+'k':t; svg.appendChild(tk); });
-  rows.forEach((r,i)=>{ const y=mT+i*rh+rh/2;
-    const nm=el('text',{class:'tick',x:mL-10,y:y+3,'text-anchor':'end',style:'font-size:11px;fill:var(--ink-soft)'}); nm.textContent=shortName(r.m); svg.appendChild(nm);
-    const mean=r.seeds.reduce((a,b)=>a+b,0)/r.seeds.length;
-    svg.appendChild(el('line',{class:'meanmark',x1:px(mean),y1:y-9,x2:px(mean),y2:y+9,stroke:PAL[r.ci%PAL.length],style:'opacity:.9'}));
-    r.seeds.forEach(v=>{ const c=el('circle',{class:'dot',cx:px(v),cy:y,r:5.5,fill:PAL[r.ci%PAL.length]});
-      c.addEventListener('mouseenter',e=>showTip(`<b>${shortName(r.m)}</b><br>seed Impact: ${v.toFixed(0)}`,e.clientX,e.clientY));
+  // alternating row bands
+  rows.forEach((r,i)=>{ if(i%2===0) svg.appendChild(el('rect',{x:0,y:mT+i*rh,width:W,height:rh,fill:'var(--surface-2)',opacity:.5,rx:4})); });
+  // "0" zone divider + label
+  svg.appendChild(el('line',{class:'grid',x1:x1,y1:mT-8,x2:x1,y2:H-mB}));
+  const z=el('text',{class:'tick',x:mL+zoneW*0.5,y:mT-12,'text-anchor':'middle'}); z.textContent='0'; svg.appendChild(z);
+  // log gridlines + ticks
+  [1,10,100,1000,10000].filter(t=>t<=maxV*1.4).forEach(t=>{ const x=px(t);
+    svg.appendChild(el('line',{class:'grid',x1:x,y1:mT-8,x2:x,y2:H-mB}));
+    const tk=el('text',{class:'tick',x:x,y:mT-12,'text-anchor':'middle'}); tk.textContent=t>=1000?(t/1000)+'k':t; svg.appendChild(tk); });
+  rows.forEach((r,i)=>{ const cy=mT+i*rh+rh/2, col=PAL[r.ci%PAL.length];
+    const nm=el('text',{x:mL-12,y:cy+4,'text-anchor':'end',style:'font-family:var(--mono);font-size:11px;fill:var(--ink-soft)'}); nm.textContent=shortName(r.m); svg.appendChild(nm);
+    // faint range connector from min to max seed
+    const lo=r.seeds[0], hi=r.seeds[r.seeds.length-1];
+    svg.appendChild(el('line',{x1:px(lo),y1:cy,x2:px(hi),y2:cy,stroke:col,'stroke-width':2,opacity:.28,'stroke-linecap':'round'}));
+    // mean tick (diamond)
+    const mean=r.seeds.reduce((a,b)=>a+b,0)/r.seeds.length, mx=px(mean);
+    svg.appendChild(el('path',{d:`M${mx},${cy-8} L${mx+6},${cy} L${mx},${cy+8} L${mx-6},${cy} Z`,fill:'none',stroke:col,'stroke-width':2,opacity:.9}));
+    // dots with vertical jitter so equal/overlapping values separate
+    const seen={};
+    r.seeds.forEach(v=>{ const xk=Math.round(px(v)); const k=xk in seen?++seen[xk]:(seen[xk]=0);
+      const jitter=(k===0?0:(k%2? -1:1)*Math.ceil(k/2)*7);
+      const c=el('circle',{class:'dot',cx:px(v),cy:cy+jitter,r:5.5,fill:col});
+      const lab=v<1?'0 (collapsed / no output)':v.toFixed(0);
+      c.addEventListener('mouseenter',e=>showTip(`<b>${shortName(r.m)}</b><br>seed Impact: ${lab}`,e.clientX,e.clientY));
       c.addEventListener('mouseleave',hideTip); svg.appendChild(c); }); });
-  const xl=el('text',{class:'alab',x:(mL+W-mR)/2,y:H-4,'text-anchor':'middle'}); xl.textContent='Impact per seed (log scale) — dot = one run, bar = mean'; svg.appendChild(xl);
+  const xl=el('text',{class:'alab',x:(x1+W-mR)/2,y:H-6,'text-anchor':'middle'}); xl.textContent='Impact per seed (log scale) · dot = one run · line = spread · ◇ = mean'; svg.appendChild(xl);
   box.appendChild(svg);
 }
 drawStrip();

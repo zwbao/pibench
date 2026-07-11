@@ -103,6 +103,24 @@ multi-agent adversarial review across seven lenses (spec conformance, correctnes
 information leaks, economic and scoring exploits, determinism, harness security); the
 findings and fixes ship with the code.
 
+## Citation
+
+If you use PIBench, please cite it:
+
+```bibtex
+@software{bao2026pibench,
+  title        = {PIBench: Can Agents Run a Research Lab?},
+  author       = {Bao, Zhiwei},
+  year         = {2026},
+  url          = {https://github.com/zwbao/pibench},
+  note         = {A long-horizon, mechanistic benchmark for research-lab agency},
+  version      = {1.0.0}
+}
+```
+
+A machine-readable `CITATION.cff` is included, so GitHub shows a "Cite this
+repository" button in the sidebar.
+
 ## License
 
-MIT.
+MIT — see [LICENSE](LICENSE).

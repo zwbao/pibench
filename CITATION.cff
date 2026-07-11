@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use PIBench, please cite it as below."
+title: "PIBench: Can Agents Run a Research Lab?"
+abstract: >-
+  A long-horizon, mechanistic benchmark in which a language-model agent runs an
+  academic research lab for 60 simulated months, managing two scarce resources
+  (money and the PI's attention), inferring hidden student ability and topic
+  hotness from noisy signals, and making irreversible bets whose citation payoff
+  is delayed and heavy-tailed.
+type: software
+authors:
+  - family-names: Bao
+    given-names: Zhiwei
+    email: zwbao1996@gmail.com
+url: "https://github.com/zwbao/pibench"
+repository-code: "https://github.com/zwbao/pibench"
+license: MIT
+keywords:
+  - large language models
+  - agents
+  - benchmark
+  - long-horizon
+  - evaluation
+date-released: 2026-07-11
+version: "1.0.0"
