@@ -1,4 +1,4 @@
-"""The PIBench world engine.
+"""The PI-Bench world engine.
 
 All world mechanics live here; the agent-facing surface is in api.py. The month
 counter starts at 1. During month m the agent acts through the API; ``tick()``

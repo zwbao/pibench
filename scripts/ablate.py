@@ -3,7 +3,7 @@
 We run the tuned rule-based baseline (deterministic, no LLM) across seeds under
 config variants that switch off one source of difficulty at a time, and also vary
 the horizon. Each variant reports mean Impact and collapse rate. This mirrors
-CEO-Bench's difficulty-knob ablations but on the mechanics unique to PIBench.
+CEO-Bench's difficulty-knob ablations but on the mechanics unique to PI-Bench.
 """
 import copy
 import json

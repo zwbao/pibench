@@ -1,4 +1,4 @@
-"""PIBench: a long-horizon benchmark where an agent runs an academic research lab for 5 years."""
+"""PI-Bench: a long-horizon benchmark where an agent runs an academic research lab for 5 years."""
 
 __version__ = "1.0.0"
 

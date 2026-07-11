@@ -23,11 +23,17 @@
     "anticipation": 0.031,
     "phd_early_quit_rate": 0.583
   },
+  "glm-5.2": {
+    "alloc_efficiency": 0.593,
+    "risk_calibration": 0.264,
+    "anticipation": -0.274,
+    "phd_early_quit_rate": 0.917
+  },
   "kimi-k2.6": {
-    "alloc_efficiency": 0.914,
-    "risk_calibration": 0.667,
-    "anticipation": -0.079,
-    "phd_early_quit_rate": 0.5
+    "alloc_efficiency": 0.637,
+    "risk_calibration": 0.656,
+    "anticipation": 0.112,
+    "phd_early_quit_rate": 0.478
   },
   "openai/gpt-5.6-sol": {
     "alloc_efficiency": 0.593,
@@ -52,6 +58,12 @@
     "risk_calibration": null,
     "anticipation": -0.319,
     "phd_early_quit_rate": null
+  },
+  "qwen3.7-max": {
+    "alloc_efficiency": 0.572,
+    "risk_calibration": 0.183,
+    "anticipation": -0.248,
+    "phd_early_quit_rate": 0.283
   },
   "qwen3.7-plus": {
     "alloc_efficiency": 0.575,

@@ -1,6 +1,6 @@
 cff-version: 1.2.0
-message: "If you use PIBench, please cite it as below."
-title: "PIBench: Can Agents Run a Research Lab?"
+message: "If you use PI-Bench, please cite it as below."
+title: "PI-Bench: Can Agents Run a Research Lab?"
 abstract: >-
   A long-horizon, mechanistic benchmark in which a language-model agent runs an
   academic research lab for 60 simulated months, managing two scarce resources

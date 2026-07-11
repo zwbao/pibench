@@ -1,4 +1,4 @@
-"""Run one PIBench episode with an LLM agent.
+"""Run one PI-Bench episode with an LLM agent.
 
 Usage: python3 scripts/run_agent.py --model qwen-plus --seed 101 [--months 60]
 """

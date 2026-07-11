@@ -1,15 +1,15 @@
-# PIBench: Can Agents Run a Research Lab? — Design Specification
+# PI-Bench: Can Agents Run a Research Lab? — Design Specification
 
 **Version 1.0 (2026-07-11)**
 
-PIBench evaluates long-horizon agent capabilities by simulating an academic research
+PI-Bench evaluates long-horizon agent capabilities by simulating an academic research
 lab over **60 months (5 years)**. The agent plays a new assistant professor ("the PI")
 at a fictional university, starting with a **$600,000 startup fund, zero students, and
 baseline reputation**, and is graded on **research Impact** at the end of month 60.
 If the lab budget ever falls strictly below zero, the lab collapses and the simulation
 ends (the analog of bankruptcy in CEO-Bench).
 
-Design lineage: CEO-Bench (arXiv:2606.18543). PIBench keeps its recipe — long horizon,
+Design lineage: CEO-Bench (arXiv:2606.18543). PI-Bench keeps its recipe — long horizon,
 hidden state observed only through noisy indirect signals, delayed and coupled
 consequences, non-stationary world, fully mechanistic rules (no LLM judge anywhere in
 the reward path) — and adds three things CEO-Bench lacks:
@@ -306,13 +306,13 @@ accept talks, do reviews, support crises. Grid ≤ 24 configs, tuned on seeds
 5. No single-action exploit yields Impact > baseline (checked adversarially).
 6. Optimal-ish oracle (hand play with full hidden state) ≈ 4–8× baseline — headroom.
 
-## 16. What PIBench measures (the paper's skill axes)
+## 16. What PI-Bench measures (the paper's skill axes)
 
-Conceptually PIBench probes: inference of hidden ability from biased signals (hiring);
+Conceptually PI-Bench probes: inference of hidden ability from biased signals (hiring);
 irreversible commitment under uncertainty (multi-year stipends, no liquidation);
 explore/exploit on a drifting field (entering before booms); delayed-reward planning
 (citations lag ~a year); dual-resource budgeting (money vs a perishable attention budget);
-and people dynamics (morale, quitting). PIBench's distinctive complement to CEO-Bench is
+and people dynamics (morale, quitting). PI-Bench's distinctive complement to CEO-Bench is
 the cluster: **allocating a fixed perishable budget + making irreversible bets on latent
 stochastic processes you can influence, where the payoff is heavy-tailed and arrives across
 mismatched horizons** — an *investment* problem, versus CEO-Bench's liquid, dense-reward

@@ -1,4 +1,4 @@
-"""Build the PIBench paper as a single self-contained HTML artifact.
+"""Build the PI-Bench paper as a single self-contained HTML artifact.
 
 Reads paper/leaderboard.json, behavior.json, ablations.json and the PNG figures in
 paper/figs/, embeds figures as data URIs, renders the leaderboard table, and writes
@@ -123,7 +123,7 @@ def results_prose(board, baseline_row, oracle_row, refs=None):
     return f"""<p>Table 1 summarizes the benchmark. Impact spans a wide range — from
 <b>{top['model']}</b> at {top['impact_mean']:.0f} down to {bot['model']} at
 {bot['impact_mean']:.0f}, a {top['impact_mean']/max(1,bot['impact_mean']):.0f}-fold gap —
-so PIBench discriminates cleanly across capability tiers. The two weakest models fail to
+so PI-Bench discriminates cleanly across capability tiers. The two weakest models fail to
 beat even the simple non-LLM baseline on the same worlds, while the strongest four clear
 it by a wide margin.</p>
 <p><b>The scores are dominated by variance, and the variance is structure, not noise.</b>
@@ -193,7 +193,7 @@ visible — citations accrue over years, so a short-horizon lab publishes too la
 almost anything, no matter how well it is run. A benchmark that ended at month 12 would
 measure something else entirely.</p>
 <p>Turning off <b>non-stationarity</b> (freezing topic hotness, no booms or busts) roughly
-halves mean Impact ({d:.0f} → {ns:.0f}): in PIBench the drifting field is as much
+halves mean Impact ({d:.0f} → {ns:.0f}): in PI-Bench the drifting field is as much
 opportunity as hazard — much of the upside comes from committing to a topic before it
 booms, and a frozen world removes that lever. Finally, an <b>ambitious</b> policy that
 hires to capacity and runs only tier-3 projects bankrupts the lab on most seeds: overreach
@@ -290,11 +290,11 @@ def build():
 CSS = open(os.path.join(os.path.dirname(__file__), "paper_style.css")).read() \
     if os.path.exists(os.path.join(os.path.dirname(__file__), "paper_style.css")) else ""
 
-PAGE = """<title>PIBench — Can Agents Run a Research Lab?</title>
+PAGE = """<title>PI-Bench — Can Agents Run a Research Lab?</title>
 <style>{css}</style>
 <div class="page">
 <header class="masthead">
-  <div class="wordmark">PI<span>Bench</span></div>
+  <div class="wordmark">PI-<span>Bench</span></div>
   <div class="tagline">a long-horizon agent benchmark</div>
 </header>
 
@@ -320,7 +320,7 @@ PAGE = """<title>PIBench — Can Agents Run a Research Lab?</title>
 <p class="abstract"><b>Abstract.</b> Language-model agents are competent at short,
 well-specified tasks, but a research career is not a task — it is a long chain of
 interdependent bets made under uncertainty, where feedback is slow and the field keeps
-shifting. <b>PIBench</b> stresses these capabilities together by simulating one of the most
+shifting. <b>PI-Bench</b> stresses these capabilities together by simulating one of the most
 information-poor, delayed-reward jobs there is: running an academic lab for 60 months. The
 world is fully mechanistic (no LLM judge in the reward path), partially observable,
 non-stationary, and full of delayed, coupled consequences. Success is <b>Impact</b> —
@@ -343,7 +343,7 @@ hot in two years, only this month's headlines; cannot observe what an agency wan
 whether last year's proposal was funded. Her decisions commit resources that cannot be
 recovered, and their consequences — citations, reputation, a student's morale collapsing
 into departure — surface months or years later.</p>
-<p>PIBench turns this into a benchmark. An agent runs a lab for five years through a
+<p>PI-Bench turns this into a benchmark. An agent runs a lab for five years through a
 programmable interface over a fully mechanistic world — every outcome decided by explicit
 rules and stochastic draws, never by a language model acting as judge, so success cannot be
 talked into existence. Three design commitments give the task its character:</p>
@@ -367,10 +367,10 @@ seeds</b>, never a best-of-N run; we tune the rule-based baseline on <b>held-out
 it never sees at test time; and we report <b>token cost</b> beside every score, so that
 "spent more thinking" is not mistaken for "is more capable." The closest prior benchmark to
 adopt this mechanistic, long-horizon shape is CEO-Bench (Chen et al., 2026), which runs an
-agent through a simulated startup; PIBench is its complement in a different economy — an
+agent through a simulated startup; PI-Bench is its complement in a different economy — an
 illiquid, delayed, people-driven research career rather than a liquid operating business.</p>
 
-<h2><span class="sn">2</span> Designing PIBench</h2>
+<h2><span class="sn">2</span> Designing PI-Bench</h2>
 <p>An agent runs a fictional lab for 60 months, beginning with a <b>$600,000 startup fund,
 zero students, and baseline reputation</b>, graded on Impact at month 60. If the budget
 ever falls below zero, the lab <b>collapses</b> and the run ends, keeping only citations
@@ -469,7 +469,7 @@ resulting invariant and penetration suites ship with the benchmark.</p>
 </article>
 
 <footer class="colophon">
-  <div>PIBench &middot; a mechanistic long-horizon benchmark for research-lab agency</div>
+  <div>PI-Bench &middot; a mechanistic long-horizon benchmark for research-lab agency</div>
   <div class="muted">Simulator, harness, adversarial test suite, and all agent
   trajectories released with the paper.</div>
 </footer>

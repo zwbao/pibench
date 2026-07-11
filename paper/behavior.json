@@ -95,29 +95,53 @@
     "topic_hot_rank": 3.05,
     "topic_concentration": 0.48
   },
-  "kimi-k2.6": {
-    "actions_per_month": 2.92,
+  "glm-5.2": {
+    "actions_per_month": 3.02,
     "action_dist": {
-      "time.next_month": 38,
-      "events.respond": 28,
-      "grants.propose": 19,
-      "recruit.offer": 10,
-      "recruit.interview": 8,
-      "projects.start": 8,
-      "students.set_mentoring": 8,
-      "papers.submit": 8,
-      "papers.polish": 6,
-      "projects.assign": 5,
-      "field.attend_conference": 4,
-      "recruit.post_postdoc": 4
+      "time.next_month": 180,
+      "events.respond": 146,
+      "grants.propose": 86,
+      "students.set_mentoring": 84,
+      "papers.polish": 60,
+      "papers.submit": 33,
+      "projects.set_compute": 26,
+      "projects.start": 24,
+      "recruit.offer": 22,
+      "recruit.interview": 17,
+      "recruit.post_postdoc": 13,
+      "field.attend_conference": 12
     },
     "interview_coverage": 1.0,
-    "n_offers": 10,
-    "grant_hit_rate": 0.11,
-    "n_proposals": 19,
-    "pubs_per_student_year": 0.259,
-    "topic_hot_rank": 3.38,
-    "topic_concentration": 0.78
+    "n_offers": 22,
+    "grant_hit_rate": 0.07,
+    "n_proposals": 86,
+    "pubs_per_student_year": 0.469,
+    "topic_hot_rank": 2.0,
+    "topic_concentration": 0.37
+  },
+  "kimi-k2.6": {
+    "actions_per_month": 2.73,
+    "action_dist": {
+      "time.next_month": 158,
+      "events.respond": 136,
+      "grants.propose": 63,
+      "recruit.offer": 41,
+      "students.set_mentoring": 34,
+      "papers.submit": 31,
+      "projects.start": 28,
+      "papers.polish": 25,
+      "recruit.interview": 20,
+      "projects.set_compute": 18,
+      "projects.assign": 15,
+      "recruit.post_postdoc": 8
+    },
+    "interview_coverage": 0.98,
+    "n_offers": 41,
+    "grant_hit_rate": 0.14,
+    "n_proposals": 63,
+    "pubs_per_student_year": 0.42,
+    "topic_hot_rank": 2.82,
+    "topic_concentration": 0.65
   },
   "openai/gpt-5.6-sol": {
     "actions_per_month": 3.17,
@@ -213,6 +237,30 @@
     "pubs_per_student_year": 0.247,
     "topic_hot_rank": 1.0,
     "topic_concentration": 1.0
+  },
+  "qwen3.7-max": {
+    "actions_per_month": 3.03,
+    "action_dist": {
+      "time.next_month": 180,
+      "events.respond": 173,
+      "papers.polish": 73,
+      "students.set_mentoring": 71,
+      "grants.propose": 70,
+      "papers.submit": 45,
+      "recruit.offer": 28,
+      "projects.start": 27,
+      "recruit.interview": 20,
+      "projects.set_compute": 13,
+      "projects.assign": 10,
+      "recruit.post_postdoc": 5
+    },
+    "interview_coverage": 1.0,
+    "n_offers": 28,
+    "grant_hit_rate": 0.07,
+    "n_proposals": 70,
+    "pubs_per_student_year": 0.837,
+    "topic_hot_rank": 1.96,
+    "topic_concentration": 0.4
   },
   "qwen3.7-plus": {
     "actions_per_month": 3.5,

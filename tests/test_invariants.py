@@ -1,4 +1,4 @@
-"""Invariant tests for the PIBench world. Plain-python asserts; run directly."""
+"""Invariant tests for the PI-Bench world. Plain-python asserts; run directly."""
 import os
 import sys
 

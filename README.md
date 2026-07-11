@@ -1,4 +1,4 @@
-# PIBench: Can Agents Run a Research Lab?
+# PI-Bench: Can Agents Run a Research Lab?
 
 A long-horizon benchmark where an LLM agent plays a new professor running an academic
 research lab for **60 simulated months**. Starting with a $600K fund, no students, and no
@@ -105,11 +105,11 @@ findings and fixes ship with the code.
 
 ## Citation
 
-If you use PIBench, please cite it:
+If you use PI-Bench, please cite it:
 
 ```bibtex
 @software{bao2026pibench,
-  title        = {PIBench: Can Agents Run a Research Lab?},
+  title        = {PI-Bench: Can Agents Run a Research Lab?},
   author       = {Bao, Zhiwei},
   year         = {2026},
   url          = {https://github.com/zwbao/pibench},

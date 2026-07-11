@@ -57,7 +57,7 @@ class WorldConfig:
     # management overhead: every researcher costs the PI unavoidable oversight hours
     # off the top, so attention binds for EVERY viable lab size (not just overreach).
     # A lab manager buys this back (money -> attention). This is the distinctive
-    # dual-resource lever PIBench adds over single-currency simulators.
+    # dual-resource lever PI-Bench adds over single-currency simulators.
     oversight_per_researcher: float = 4.0
     oversight_per_ra: float = 1.5
     oversight_min_per_researcher: float = 1.0

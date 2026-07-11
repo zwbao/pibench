@@ -1,4 +1,4 @@
-"""Build the PIBench research SITE — a self-contained, web-native project page.
+"""Build the PI-Bench research SITE — a self-contained, web-native project page.
 
 A peer opens one URL and understands the whole work: motivation, the task, an
 interactive leaderboard, the findings with LIVE charts (drawn in-browser, not static
@@ -87,7 +87,7 @@ def arch_svg():
     rows.append(f'<text class="desc" x="{x0+16}" y="{y+38}">baseline (held-out tuned) · oracle (headroom) · ablations · 4 skill axes → leaderboard, figures, this site</text>')
     y += 48
     H = y + 24
-    return (f'<svg class="arch-svg" viewBox="0 0 {W} {H}" role="img" aria-label="PIBench architecture">'
+    return (f'<svg class="arch-svg" viewBox="0 0 {W} {H}" role="img" aria-label="PI-Bench architecture">'
             f'<defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">'
             f'<path d="M0,0 L6,3 L0,6" fill="var(--muted)"/></marker></defs>'
             + "".join(rows) + "</svg>")
@@ -151,13 +151,13 @@ def build():
     print(f"wrote {SITE}/index.html ({len(html)//1024} KB, {n_models} models)")
 
 
-TEMPLATE = r"""<title>PIBench · Can Agents Run a Research Lab?</title>
+TEMPLATE = r"""<title>PI-Bench · Can Agents Run a Research Lab?</title>
 <meta name="description" content="A long-horizon benchmark where an LLM agent runs an academic research lab for five simulated years.">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>%%CSS%%</style>
 
 <nav class="nav">
-  <span class="mark">PI<span>Bench</span></span>
+  <span class="mark">PI-<span>Bench</span></span>
   <div class="links">
     <a href="#task">The task</a>
     <a href="#leaderboard">Leaderboard</a>
@@ -315,7 +315,7 @@ q = <span class="kw">query</span>(<span class="str">"SELECT topic, SUM(preprint_
 <section id="takeaways">
   <div class="inner">
     <div class="eyebrow">conclusions</div>
-    <h2>What PIBench shows</h2>
+    <h2>What PI-Bench shows</h2>
     <div class="takeaways">
       <div class="take"><div class="num">01</div><h3>A wide, honest gap</h3>
         <p>Impact spans more than an order of magnitude across models, and the strongest still
@@ -325,13 +325,13 @@ q = <span class="kw">query</span>(<span class="str">"SELECT topic, SUM(preprint_
       <div class="take"><div class="num">02</div><h3>Reward is heavy-tailed</h3>
         <p>A five-year career is dominated by whether the agent catches one rare research boom.
         This makes a single number — or a best-of-N run — actively misleading, and argues that
-        long-horizon benchmarks must report per-seed spread, as PIBench does.</p></div>
+        long-horizon benchmarks must report per-seed spread, as PI-Bench does.</p></div>
       <div class="take"><div class="num">03</div><h3>Reactive, not anticipatory</h3>
         <p>Models chase topics that are already hot rather than committing early to ones that
         will be. The highest-value strategy — the contrarian bet that pays off years later —
         requires foresight none of them show.</p></div>
       <div class="take"><div class="num">04</div><h3>Investing ≠ operating</h3>
-        <p>PIBench probes a distinct capability cluster: allocating a perishable budget and
+        <p>PI-Bench probes a distinct capability cluster: allocating a perishable budget and
         making irreversible bets on latent processes whose payoff is delayed and lumpy. It is a
         complement to operating-style benchmarks, not a restatement of them.</p></div>
     </div>
@@ -434,9 +434,9 @@ python3 scripts/run_experiments.py --exp exp2 --models ... --seeds 101,102,103
 python3 scripts/finalize.py --exp exp2</pre></div>
 
     <h3 style="margin-top:2rem">Citation</h3>
-    <p>If you use PIBench, please cite it:</p>
+    <p>If you use PI-Bench, please cite it:</p>
     <div class="console"><pre>@software{bao2026pibench,
-  title   = {PIBench: Can Agents Run a Research Lab?},
+  title   = {PI-Bench: Can Agents Run a Research Lab?},
   author  = {Bao, Zhiwei},
   year    = {2026},
   url     = {%%GITHUB%%},
@@ -447,11 +447,11 @@ python3 scripts/finalize.py --exp exp2</pre></div>
 
 <footer class="foot">
   <div class="inner">
-    <b style="color:var(--ink)">PIBench</b> — a mechanistic, long-horizon benchmark for
+    <b style="color:var(--ink)">PI-Bench</b> — a mechanistic, long-horizon benchmark for
     research-lab agency. Simulator, harness, adversarial test suite, and all agent trajectories
     open at <a href="%%GITHUB%%">github.com/zwbao/pibench ↗</a>.
     <div style="margin-top:.6rem">The closest prior benchmark to adopt this mechanistic,
-    long-horizon shape is CEO-Bench (Chen et al., 2026); PIBench is its complement in an
+    long-horizon shape is CEO-Bench (Chen et al., 2026); PI-Bench is its complement in an
     illiquid, delayed, people-driven research economy.</div>
   </div>
 </footer>
