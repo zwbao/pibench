@@ -11,7 +11,8 @@ type: software
 authors:
   - family-names: Bao
     given-names: Zhiwei
-    email: zwbao1996@gmail.com
+    email: zwbao1996@zju.edu.cn
+    affiliation: Zhejiang University
 url: "https://github.com/zwbao/pibench"
 repository-code: "https://github.com/zwbao/pibench"
 license: MIT
