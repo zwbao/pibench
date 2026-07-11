@@ -342,6 +342,15 @@ q = <span class="kw">query</span>(<span class="str">"SELECT topic, SUM(preprint_
     both the upside and the downside.</p>
     %%FIG_VARIANCE%%
 
+    <p class="read"><b>Can three seeds rank models at all?</b> On the arithmetic mean, one boom
+    seed dominates — but that is the wrong summary for a heavy-tailed quantity. On the log scale,
+    a variance decomposition over the 36 runs puts <b>47% of the variance on the model</b>
+    (skill), 34% on the seed (luck), and 19% on their interaction: models are more separable than
+    the raw spread suggests. The summary even moves the crown — by geometric mean gpt-5.6-sol
+    leads and the arithmetic winner claude-fable-5 (largest log-scale spread) drops to third. We
+    read the board as a robust separation of broad tiers, with the top ranks turning on how one
+    weights the boom seed; an eight-seed grid to tighten adjacent ranks is future work.</p>
+
     <h4 style="margin-top:2rem;font-family:var(--sans);font-size:1rem;color:var(--ink)">One model, two fates</h4>
     <p class="read">The clearest illustration is a single model — the top-scoring
     <b>claude-fable-5</b> — on two different worlds. Its own monthly memory notes tell the story;
@@ -473,6 +482,12 @@ q = <span class="kw">query</span>(<span class="str">"SELECT topic, SUM(preprint_
     uncapped reputation-farming exploit; a compute-spike exploit on paper quality; and an
     order-dependence that violated determinism. The hardened sandbox and the resulting invariant
     and penetration suites ship with the benchmark.</p>
+    <p class="read"><b>Harness sensitivity.</b> Scores can depend on the scaffold, so we ablate
+    its most load-bearing part — the persistent memory file. Disabling it for qwen-plus does
+    <i>not</i> lower its score (mean 80 → 202), so the ranking is not a trivial artifact of the
+    scaffold handing the model state; a memory-heavy strong-model ablation and a full
+    cross-scaffold swap remain future work, so rankings should be read within this fixed
+    harness.</p>
   </div>
 </section>
 
