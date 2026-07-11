@@ -1,0 +1,40 @@
+{
+ "model_pct": 46.7,
+ "seed_pct": 34.0,
+ "resid_pct": 19.3,
+ "geo_mean": {
+  "openai/gpt-5.6-sol": 694,
+  "qwen3.7-max": 533,
+  "anthropic/claude-fable-5": 501,
+  "openai/gpt-5.6-terra": 444,
+  "glm-5.2": 186,
+  "anthropic/claude-opus-4.8": 184,
+  "kimi-k2.6": 173,
+  "qwen3.7-plus": 124,
+  "anthropic/claude-sonnet-5": 112,
+  "deepseek-v3.2": 58,
+  "qwen-plus": 51,
+  "qwen-turbo": 5
+ },
+ "geo_rank": [
+  "gpt-5.6-sol",
+  "qwen3.7-max",
+  "claude-fable-5",
+  "gpt-5.6-terra",
+  "glm-5.2",
+  "claude-opus-4.8",
+  "kimi-k2.6",
+  "qwen3.7-plus",
+  "claude-sonnet-5",
+  "deepseek-v3.2",
+  "qwen-plus",
+  "qwen-turbo"
+ ],
+ "arith_top": "claude-fable-5",
+ "geo_top": "gpt-5.6-sol",
+ "seed_effect": {
+  "101": 0.61,
+  "102": -0.03,
+  "103": -0.58
+ }
+}

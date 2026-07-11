@@ -54,7 +54,7 @@ def leaderboard_table(board, baseline_row, oracle_row):
     rows = []
     best = max((r["impact_mean"] for r in board), default=1) or 1
     for r in board:
-        seeds = " / ".join(str(int(v)) for v in r["impact_per_seed"].values())
+        seeds = " / ".join(str(round(v)) for v in r["impact_per_seed"].values())
         bar = int(60 * r["impact_mean"] / best)
         rows.append(
             f"<tr><td class='model'>{r['model']}</td>"
@@ -131,10 +131,10 @@ between the extremes. The tiers are broad but not clean: adjacent models overlap
 seed variance (qwen3.7-max 2091/549/132 vs gpt-5.6-sol 1997/452/370). {n_beat_below} of the
 {len(board)} models fail to beat even the non-LLM baseline ({b:.0f}) on these worlds.</p>
 <p><b>The scores are dominated by variance, and the variance is structure, not noise.</b>
-{top['model']}'s three runs scored {', '.join(f'{int(v)}' for v in top_seeds)} — a single
+{top['model']}'s three runs scored {', '.join(f'{round(v)}' for v in top_seeds)} — a single
 seed contributes most of its average — and the privileged-information oracle shows the same
-signature ({', '.join(f'{int(v)}' for v in orc_seeds)}): a boom world admits a score in the
-thousands, the no-boom world barely twenty. Section 3.3 traces this to its mechanism: most of
+signature ({', '.join(f'{round(v)}' for v in orc_seeds)}): a boom world admits a score in the
+thousands, the no-boom world barely twenty. We trace this to its mechanism below (§The anatomy of the variance): most of
 a lab's Impact comes from catching a topic <i>boom</i>, a rare high-magnitude event, so the
 payoff is heavy-tailed, much as real academic impact is. With three seeds the ranking of
 adjacent models is genuinely unsettled and a single run is not evidence of a robust strategy —
@@ -145,12 +145,12 @@ but through a <i>fixed heuristic</i>; it is a strong informed-play reference, no
 optimum, and indeed {top['model']} exceeds it on all three seeds by riding the boom harder
 (though it, too, collapses to {min(top_seeds):.0f} on the no-boom world). The real ceiling is
 far higher and can be read straight off the citation mechanics: on the boom seed a single
-optimally-timed top-venue paper accrues about {ceil:,} projected citations — nearly the entire
-score of the best actual run — and a productive lab can place many such papers, putting a loose
-upper bound in the tens of thousands (Appendix). The best observed run ({max(top_seeds):.0f})
+optimally-timed top-venue paper accrues about 3,300 projected citations — nearly the entire
+score of the best actual run — and a productive lab can place many such papers, putting a loose,
+friction-free upper bound in the tens of thousands (Appendix). The best observed run ({max(top_seeds):.0f})
 and the informed oracle ({max(orc_seeds) if orc_seeds else 0:.0f}) both capture a small
 fraction of it; no agent plays reliably, and the highest-value move — anticipating a boom
-rather than chasing it (§3.4) — is absent in every model. The benchmark is far from
+rather than chasing it (§4) — is absent in every model. The benchmark is far from
 saturated.</p>"""
 
 
@@ -174,13 +174,20 @@ def behavior_prose(behav, board):
             f"against {top}'s {tb['pubs_per_student_year']:.2f}, and finishes near the "
             f"bottom of the table. Activity is not the bottleneck; turning it into "
             f"published work is.")
-    return f"""<p>Two quantitative axes confirm the trace reading (Figure 3). <b>Action
-intensity</b> — actions taken per simulated month — varies about three-fold across models but
-does <i>not</i> track Impact.{busy_clause} <b>Conversion</b> (papers published per
-student-year) tracks the leaderboard far better: {top} extracts
-{tb['pubs_per_student_year']:.2f} papers from each student-year, roughly twice what the weakest
-labs manage. Activity is cheap; converting it into a paper that gets in and gets cited is the
-scarce skill.</p>"""
+    corr = behav.get("_corr", {})
+    rc = corr.get("conversion_impact_spearman")
+    ra = corr.get("activity_impact_spearman")
+    corr_clause = (f" Across the twelve models both correlate with Impact — action intensity at "
+                   f"Spearman ρ={ra:.2f}, conversion at ρ={rc:.2f} — and the two are themselves "
+                   f"collinear, so neither is cleanly 'the' bottleneck." if rc is not None else "")
+    return f"""<p>Two quantitative axes (Figure 3) sharpen this.{corr_clause} The informative
+signal is in the exceptions: {busy_low if busy_low else 'the busiest low scorer'} is as active
+as {top} — {db.get('actions_per_month', 0):.1f} actions a month — yet converts only
+{db.get('pubs_per_student_year', 0):.2f} papers per student-year against {top}'s
+{tb['pubs_per_student_year']:.2f} and finishes near the bottom. Activity without conversion is
+a distinct failure mode; the qualitative divide above — reasoning about hidden state versus
+thrashing on the API — is what separates the labs that turn actions into cited papers from
+those that do not.</p>"""
 
 
 def ablation_prose(ab):
@@ -203,7 +210,7 @@ halves mean Impact ({d:.0f} → {ns:.0f}): in PI-Bench the drifting field is as 
 opportunity as hazard — much of the upside comes from committing to a topic before it
 booms, and a frozen world removes that lever. Removing the <b>attention</b> cap, by contrast,
 barely moves the baseline (Table 2) — but that is because the conservative baseline stays
-small; attention binds for agents that actually build a lab, as §3.4 shows (the top model
+small; attention binds for agents that actually build a lab, as §4 shows (the top model
 runs at the ceiling half the time). And an <b>ambitious</b> policy that hires to capacity and
 runs only tier-3 projects bankrupts the lab on most seeds: ambition must be paid for out of a
 runway the agent has to protect.</p>"""
@@ -234,11 +241,33 @@ asymmetrically. Most capable models are <b>trend-chasers</b>: {', '.join(chasers
 on average, close to the current hottest topic (hot-rank near 2 of 8) — sensible, since hot
 topics earn more citations. The clearest <b>cold-bench</b> profile is {cold_name}, which
 commits to a couple of less-fashionable topics and posts the lowest-variance, never-boom-
-never-crash record. But <b>no model does the genuinely contrarian move</b>: entering a
-still-cold topic that later blooms. That requires foresight — the oracle does it because it
-sees the future field — and its absence is why the anticipation axis (below) runs near zero
-for every model. Agents react to observed hotness; they do not anticipate it, which is
-precisely where the largest, most durable Impact lives.</p>"""
+never-crash record. But <b>no model does the genuinely contrarian move</b>: entering a topic
+while it is still cold and riding it up. A boom's onset is a partly exogenous jump that no
+observable-only policy can perfectly foresee — so we do not claim full forecastability — but
+its early, rising phase is visible in the preprint feed and the crowding lag before the news
+makes it obvious, and the oracle exploits exactly that window. Every model instead enters
+topics that are <i>already</i> hot (and therefore crowded and prone to scooping); the
+anticipation axis (below) runs near zero for all of them. Reacting to observed hotness is
+strictly worse than entering the rising phase early, which is where the most durable Impact
+lives.</p>"""
+
+
+def decomp_prose(dc):
+    if not dc:
+        return ""
+    geo = dc.get("geo_rank", [])
+    return f"""<p><b>Can three seeds rank models at all?</b> On the arithmetic mean the answer
+looks bleak — one boom seed dominates — but the arithmetic mean of a heavy-tailed quantity is
+the wrong summary. On the log scale, which matches the multiplicative reward, a two-way
+variance decomposition over the 36 runs attributes <b>{dc['model_pct']:.0f}% of the variance to
+the model</b> (skill), {dc['seed_pct']:.0f}% to the seed (luck), and {dc['resid_pct']:.0f}% to
+their interaction — models are more separable than the raw spread suggests. The choice of
+summary even moves the crown: by geometric mean the order is {', '.join(geo[:3])}, so
+<b>{dc.get('geo_top')}</b> leads and the arithmetic winner {dc.get('arith_top')} (whose runs
+have the largest log-scale spread) drops to third. We therefore read the leaderboard as a
+robust separation of broad tiers plus a warning that the top ranks turn on how one weights the
+boom seed; the eight-seed grid that would tighten the adjacent ranks is stated as future
+work.</p>"""
 
 
 def variance_prose(case):
@@ -274,6 +303,7 @@ def build():
     ab = load("ablations.json", [])
     refs = load("refs.json", {})  # {baseline:{...}, oracle:{...}, model_list:[...]}
     case = load("case_study.json", {})
+    decomp = load("variance_decomp.json", {})
     baseline_row = refs.get("baseline")
     oracle_row = refs.get("oracle")
 
@@ -297,6 +327,7 @@ def build():
         ablation_table=ablation_table(ab),
         results_prose=results_prose(board, baseline_row, oracle_row, refs),
         variance_prose=variance_prose(case),
+        decomp_prose=decomp_prose(decomp),
         behavior_prose=behavior_prose(behav, board),
         chasing_prose=chasing_prose(behav, board),
         ablation_prose=ablation_prose(ab),
@@ -315,12 +346,13 @@ def build():
                        "final years — the delayed-reward structure the benchmark is built "
                        "around.", 1),
         fig_behavior=fig("fig_behavior.png",
-                         "Behavioral axes. Left: actions taken per simulated month — not "
-                         "correlated with Impact. Right: papers per student-year, which "
-                         "tracks the leaderboard: the gap is conversion, not activity.", 3),
+                         "Behavioral axes. Left: actions per simulated month. Right: papers per "
+                         "student-year. Both correlate with Impact (and with each other); the "
+                         "informative cases are labs that are active yet fail to convert — a "
+                         "distinct failure mode.", 3),
         fig_skills=fig("fig_skills.png",
                        "Recovering the capability axes from the hidden eval log: mentoring "
-                       "allocation efficiency (0.5 = random), topic anticipation (>0 = "
+                       "allocation efficiency (0.5 = random), topic anticipation (&gt;0 = "
                        "enters before the boom), PhD attrition (lower better), and risk "
                        "calibration (bolder when affordable).", 4),
     )
@@ -473,6 +505,7 @@ baseline {b_broad}, oracle {o_broad} — as more stable reference points.</p>
 <h3>The anatomy of the variance</h3>
 {variance_prose}
 {fig_variance}
+{decomp_prose}
 
 <h2><span class="sn">4</span> A look into agent behavior</h2>
 <p>Because the world is fully logged, we can open the trajectories and read what agents
@@ -556,7 +589,7 @@ base, and a harvest-resistant score.</p>
 model impact, not the substance of ideas — and we omit teaching, collaboration politics, and
 the human texture of mentorship beyond a morale variable. (ii) The <b>oracle is not a proven
 optimum</b>: it plays with hidden information through a fixed heuristic, and the strongest model
-exceeds it on boom seeds; our headroom claim therefore rests on the transparent citation-based
+exceeds it on all three seeds; our headroom claim therefore rests on the transparent citation-based
 ceiling (Appendix), not on the oracle. (iii) <b>Three seeds</b> give a mean with wide spread
 but do not settle the ranking of adjacent models; the robust claims are the tier separation and
 the near-zero anticipation axis, and we are extending all models to the eight-seed grid. (iv)

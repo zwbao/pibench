@@ -367,9 +367,10 @@ q = <span class="kw">query</span>(<span class="str">"SELECT topic, SUM(preprint_
     (GLM-5.2: <i>"CLAR bar: 4.4–5.2 accepted"</i>), and correct the pool-specific bias in
     applicant signals. Weak models substitute trial-and-error: qwen-turbo wrote to memory once
     in 293 turns and hoarded $741k with two papers and no students; deepseek spent half its
-    turns in API errors and had no team thirty months in. And <b>activity is not the
-    bottleneck</b> — weak models act just as often; what they cannot do is convert actions into
-    papers that get in and get cited.</p>
+    turns in API errors and had no team thirty months in. Both activity and conversion
+    correlate with Impact (ρ ≈ 0.8, and with each other), so neither is cleanly the bottleneck —
+    but the informative cases are labs that are <b>active yet cannot convert</b>: deepseek is as
+    busy as the top models and finishes near the bottom.</p>
     %%FIG_BEHAVIOR%%
   </div>
 </section>
