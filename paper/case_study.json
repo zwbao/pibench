@@ -1,0 +1,179 @@
+{
+ "model": "claude-fable-5",
+ "left": {
+  "seed": 101,
+  "outcome": "Impact 4078",
+  "label": "a boom world, ridden to the top",
+  "collapsed": false,
+  "budget_series": [
+   598500,
+   595500,
+   595500,
+   587500,
+   574300,
+   561600,
+   551450,
+   537800,
+   527650,
+   518000,
+   499750,
+   481500,
+   459250,
+   443650,
+   424150,
+   405150,
+   386150,
+   362150,
+   341150,
+   319650,
+   305550,
+   324267,
+   341483,
+   360700,
+   374417,
+   393033,
+   407150,
+   424767,
+   434983,
+   445200,
+   455917,
+   473633,
+   479950,
+   487267,
+   494083,
+   500900,
+   505717,
+   501133,
+   505550,
+   524867,
+   539183,
+   559100,
+   585917,
+   612533,
+   642550,
+   632850,
+   624150,
+   615450,
+   606750,
+   597650,
+   588550,
+   572050,
+   557550,
+   537950,
+   517850,
+   499750,
+   481650,
+   482450,
+   488250,
+   495550
+  ],
+  "milestones": [
+   {
+    "m": 1,
+    "t": "Offers to 3 strong applicants; plan: publish early, watch runway."
+   },
+   {
+    "m": 25,
+    "t": "Won the big AMP moonshot grant — $35k/mo through m45. Runway secured.",
+    "tag": "funding"
+   },
+   {
+    "m": 37,
+    "t": "5 papers out incl. a NAIC reasoning paper; income covers burn."
+   },
+   {
+    "m": 49,
+    "t": "Net burn now negative (self-funding). 10 papers.",
+    "tag": "safe"
+   },
+   {
+    "m": 55,
+    "t": "14+ papers; an embodied paper accepted at the top venue — 'big win'.",
+    "tag": "win"
+   },
+   {
+    "m": 60,
+    "t": "Ends safe. Score = citations + projection.",
+    "tag": "win"
+   }
+  ]
+ },
+ "right": {
+  "seed": 103,
+  "outcome": "Impact 23",
+  "label": "a no-boom world, the same aggression that sank it",
+  "collapsed": true,
+  "budget_series": [
+   599500,
+   596500,
+   596500,
+   595000,
+   594500,
+   593500,
+   590500,
+   589000,
+   580500,
+   570500,
+   561000,
+   546000,
+   532500,
+   516400,
+   487300,
+   458200,
+   424300,
+   393000,
+   368600,
+   345600,
+   321200,
+   291200,
+   259200,
+   228200,
+   198700,
+   183700,
+   168200,
+   155700,
+   142500,
+   128800,
+   108700,
+   89100,
+   70000,
+   50400,
+   33800,
+   20900,
+   8000,
+   -5400
+  ],
+  "milestones": [
+   {
+    "m": 7,
+    "t": "All 3 PhD offers declined; postdoc search drew no applicants. Lab still empty.",
+    "tag": "bad"
+   },
+   {
+    "m": 19,
+    "t": "Only a small TIF grant ($7.5k/mo). Burn ~$24k. Spending for impact anyway.",
+    "tag": "bad"
+   },
+   {
+    "m": 25,
+    "t": "Budget $228k, burn ~$30k. 'MUST land a grant.'"
+   },
+   {
+    "m": 31,
+    "t": "First top-venue paper (NAIC). But runway ~6 months. 'MUST land grant.'",
+    "tag": "win"
+   },
+   {
+    "m": 37,
+    "t": "Budget $21k → ~$8k. 'COLLAPSE M39 unless a grant lands.'",
+    "tag": "bad"
+   },
+   {
+    "m": 38,
+    "t": "Postdoc contract ended, couldn't afford renewal. Grant didn't land → collapse.",
+    "tag": "collapse"
+   }
+  ]
+ },
+ "moral": "Same model, same aggressive high-throughput playbook. On seed 101 an early AMP grant bought the runway to ride a booming topic to 4078; on seed 103, declined offers, no big grant, and no boom left the same strategy overextended, and the lab collapsed at month 38 — freezing Impact at 23 with no going-concern projection. The variance is not noise; it is a high-commitment strategy meeting the exogenous luck of the seed."
+}

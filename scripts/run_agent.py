@@ -23,6 +23,8 @@ if __name__ == "__main__":
     ap.add_argument("--temperature", type=float, default=0.4)
     ap.add_argument("--out", default=None)
     ap.add_argument("--quiet", action="store_true")
+    ap.add_argument("--no-memory", action="store_true",
+                    help="harness ablation: disable the persistent memory file")
     args = ap.parse_args()
 
     env = load_env(ROOT)
@@ -34,7 +36,8 @@ if __name__ == "__main__":
         model=args.model, seed=args.seed, out_dir=out,
         api_key=api_key, base_url=base_url,
         months=args.months, max_turns=args.max_turns,
-        temperature=args.temperature, verbose=not args.quiet)
+        temperature=args.temperature, verbose=not args.quiet,
+        memory_enabled=not args.no_memory)
     mins = (time.time() - t0) / 60
     print(f"\nDONE in {mins:.1f} min -> {out}")
     for k in ("impact", "citations", "projected", "h_index", "publications",

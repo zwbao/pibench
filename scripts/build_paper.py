@@ -79,12 +79,12 @@ def leaderboard_table(board, baseline_row, oracle_row):
             f"<td class='num'>—</td><td class='num'>—</td><td class='num tiny'>no LLM</td></tr>")
     if oracle_row:
         ref.append(
-            f"<tr class='ref'><td class='model'>oracle (full hidden state)</td>"
+            f"<tr class='ref'><td class='model'>oracle (informed reference)</td>"
             f"<td class='num'>{oracle_row['impact_mean']:.0f}</td>"
             f"<td class='num tiny'>—</td><td class='num'>{oracle_row['collapsed']}"
             f"/{oracle_row['n']}</td><td class='num'>{oracle_row['pubs']:.1f}</td>"
             f"<td class='num'>—</td><td class='num'>—</td><td class='num'>—</td>"
-            f"<td class='num'>—</td><td class='num tiny'>upper bound</td></tr>")
+            f"<td class='num'>—</td><td class='num tiny'>full-info policy</td></tr>")
     return (f"<div class='table-wrap'><table class='board'>{head}"
             f"{''.join(rows)}{''.join(ref)}</table></div>")
 
@@ -118,30 +118,40 @@ def results_prose(board, baseline_row, oracle_row, refs=None):
     orc_broad = refs.get("oracle_broad", {}).get("impact_mean", orc)
     b_broad = refs.get("baseline_broad", {}).get("impact_mean", b)
     top_seeds = list(top["impact_per_seed"].values())
-    hi, lo = max(top_seeds), min(top_seeds)
     orc_seeds = refs.get("oracle", {}).get("per_seed", [])
-    return f"""<p>Table 1 summarizes the benchmark. Impact spans a wide range — from
-<b>{top['model']}</b> at {top['impact_mean']:.0f} down to {bot['model']} at
-{bot['impact_mean']:.0f}, a {top['impact_mean']/max(1,bot['impact_mean']):.0f}-fold gap —
-so PI-Bench discriminates cleanly across capability tiers. The two weakest models fail to
-beat even the simple non-LLM baseline on the same worlds, while the strongest four clear
-it by a wide margin.</p>
+    ceil = refs.get("ceiling_per_paper", 3300)
+    # everything below is stated on the SAME matched three seeds {101,102,103}
+    n_beat_below = sum(1 for r in board if baseline_row and r["impact_mean"] <= b)
+    return f"""<p>Table 1 summarizes the benchmark; all model, baseline, and oracle numbers
+are on the same three seeds {{101, 102, 103}} (we report broader eight-seed baseline and
+oracle estimates only as a stability check, clearly labelled). Impact spans a wide range —
+from <b>{top['model']}</b> at {top['impact_mean']:.0f} down to {bot['model']} at
+{bot['impact_mean']:.0f}, a {top['impact_mean']/max(1,bot['impact_mean']):.0f}-fold gap
+between the extremes. The tiers are broad but not clean: adjacent models overlap well within
+seed variance (qwen3.7-max 2091/549/132 vs gpt-5.6-sol 1997/452/370). {n_beat_below} of the
+{len(board)} models fail to beat even the non-LLM baseline ({b:.0f}) on these worlds.</p>
 <p><b>The scores are dominated by variance, and the variance is structure, not noise.</b>
 {top['model']}'s three runs scored {', '.join(f'{int(v)}' for v in top_seeds)} — a single
-seed contributes most of its average. The oracle shows the same signature
-({', '.join(f'{int(v)}' for v in orc_seeds)}): one world admits a score of over 2,000,
-another barely 40. The reason is that most of a lab's Impact comes from catching a topic
-<i>boom</i> — a rare, high-magnitude event — so a career's payoff is heavy-tailed, much as
-real academic impact is. This is precisely why we report the per-seed spread and a mean
-rather than a best-of-N: with three seeds the ranking of adjacent models is not settled,
-and a single lucky run is not evidence of a robust strategy. It is also a caution for any
-long-horizon benchmark that reports one number.</p>
-<p><b>Headroom remains.</b> The oracle — playing with full access to hidden abilities, the
-future hotness trajectory, and latent quality — averages {orc_broad:.0f} over a broader
-eight-seed estimate (and {orc:.0f} over these three), well above any model's stable
-performance; the simple baseline's broader estimate is {b_broad:.0f}. No agent reliably
-reaches the attainable frontier: the best model touches the oracle's neighborhood only on
-the one lucky, boom-rich seed and falls back to a few hundred on the others.</p>"""
+seed contributes most of its average — and the privileged-information oracle shows the same
+signature ({', '.join(f'{int(v)}' for v in orc_seeds)}): a boom world admits a score in the
+thousands, the no-boom world barely twenty. Section 3.3 traces this to its mechanism: most of
+a lab's Impact comes from catching a topic <i>boom</i>, a rare high-magnitude event, so the
+payoff is heavy-tailed, much as real academic impact is. With three seeds the ranking of
+adjacent models is genuinely unsettled and a single run is not evidence of a robust strategy —
+a caution for any long-horizon benchmark that reports one number.</p>
+<p><b>The oracle is a reference, not a ceiling — and headroom is large.</b> Our "oracle"
+plays with full access to hidden abilities, the future hotness trajectory, and latent quality,
+but through a <i>fixed heuristic</i>; it is a strong informed-play reference, not a proven
+optimum, and indeed {top['model']} exceeds it on all three seeds by riding the boom harder
+(though it, too, collapses to {min(top_seeds):.0f} on the no-boom world). The real ceiling is
+far higher and can be read straight off the citation mechanics: on the boom seed a single
+optimally-timed top-venue paper accrues about {ceil:,} projected citations — nearly the entire
+score of the best actual run — and a productive lab can place many such papers, putting a loose
+upper bound in the tens of thousands (Appendix). The best observed run ({max(top_seeds):.0f})
+and the informed oracle ({max(orc_seeds) if orc_seeds else 0:.0f}) both capture a small
+fraction of it; no agent plays reliably, and the highest-value move — anticipating a boom
+rather than chasing it (§3.4) — is absent in every model. The benchmark is far from
+saturated.</p>"""
 
 
 def behavior_prose(behav, board):
@@ -164,17 +174,13 @@ def behavior_prose(behav, board):
             f"against {top}'s {tb['pubs_per_student_year']:.2f}, and finishes near the "
             f"bottom of the table. Activity is not the bottleneck; turning it into "
             f"published work is.")
-    return f"""<p>Behavioral traces separate the models by more than the headline number.
-Figure 3 shows two axes. <b>Action intensity</b> — actions taken per simulated month —
-varies about three-fold across models, but it does <i>not</i> track Impact.{busy_clause}</p>
-<p>The second axis, <b>conversion</b> (papers published per student-year), tracks the
-leaderboard far better: the strongest lab, {top}, extracts
-{tb['pubs_per_student_year']:.2f} papers from each student-year, roughly twice what the
-weakest labs manage. The gap is not in taking actions — every model issues valid tool
-calls — but in composing mentoring, project choice, polishing, and venue targeting into a
-paper that actually gets in and gets cited. The bottleneck is not issuing valid tool
-calls — every model does that — but composing them into a coherent research program that
-survives delayed feedback and a shifting field.</p>"""
+    return f"""<p>Two quantitative axes confirm the trace reading (Figure 3). <b>Action
+intensity</b> — actions taken per simulated month — varies about three-fold across models but
+does <i>not</i> track Impact.{busy_clause} <b>Conversion</b> (papers published per
+student-year) tracks the leaderboard far better: {top} extracts
+{tb['pubs_per_student_year']:.2f} papers from each student-year, roughly twice what the weakest
+labs manage. Activity is cheap; converting it into a paper that gets in and gets cited is the
+scarce skill.</p>"""
 
 
 def ablation_prose(ab):
@@ -195,10 +201,12 @@ measure something else entirely.</p>
 <p>Turning off <b>non-stationarity</b> (freezing topic hotness, no booms or busts) roughly
 halves mean Impact ({d:.0f} → {ns:.0f}): in PI-Bench the drifting field is as much
 opportunity as hazard — much of the upside comes from committing to a topic before it
-booms, and a frozen world removes that lever. Finally, an <b>ambitious</b> policy that
-hires to capacity and runs only tier-3 projects bankrupts the lab on most seeds: overreach
-without runway discipline bankrupts the lab: ambition must be paid for out of a runway the
-agent has to protect.</p>"""
+booms, and a frozen world removes that lever. Removing the <b>attention</b> cap, by contrast,
+barely moves the baseline (Table 2) — but that is because the conservative baseline stays
+small; attention binds for agents that actually build a lab, as §3.4 shows (the top model
+runs at the ceiling half the time). And an <b>ambitious</b> policy that hires to capacity and
+runs only tier-3 projects bankrupts the lab on most seeds: ambition must be paid for out of a
+runway the agent has to protect.</p>"""
 
 
 def headline(board, baseline_row, oracle_row):
@@ -233,25 +241,54 @@ for every model. Agents react to observed hotness; they do not anticipate it, wh
 precisely where the largest, most durable Impact lives.</p>"""
 
 
+def variance_prose(case):
+    if not case:
+        return "<p class='muted'>[variance analysis pending]</p>"
+    L, R = case["left"], case["right"]
+    return f"""<p>Because the simulator is deterministic, we replay every run's full world at
+zero cost and decompose its Impact into <b>two multiplicative layers</b>. Most Impact comes
+from riding a topic <i>boom</i>. <b>Whether a boom exists is exogenous</b>, fixed by the seed:
+on our three worlds the hottest a topic gets is roughly 6.0, 6.0, and 3.0. <b>How much a model
+capitalizes is the skill</b> — placing enough good papers in the hot topic and surviving to
+publish them. Figure 2 shows both layers: Impact scales with the hotness a lab's papers
+actually ride (left), and on boom worlds that Impact is bought with paper volume (right).
+Heavy-tailed models commit hard and out-produce; timid models under-commit, capping both the
+upside and the crash.</p>
+<p><b>One model, two fates.</b> The clearest case is the top model, {case['model']}, on two
+seeds. On seed {L['seed']} it secured a large moonshot grant by month 25, which bought the
+runway to sustain a big lab and ride a booming topic to <b>Impact {L['outcome'].split()[-1]}</b>
+(14+ papers, self-funding by year four). On seed {R['seed']} — a no-boom world — the same
+aggressive playbook met a run of bad exogenous draws: its PhD offers were declined and the
+postdoc search drew no applicants, it never landed a big grant, and it spent into a corner;
+its own memory reads <i>"COLLAPSE M39 unless a grant lands"</i>, the grant did not, and the
+lab went bankrupt at month 38, freezing Impact at <b>{R['outcome'].split()[-1]}</b> with no
+going-concern projection. Identical strategy, opposite outcomes: the heavy tail is a
+high-commitment policy meeting the luck of the seed — and precisely why a single number, or a
+best-of-N run, misleads.</p>"""
+
+
 def build():
     board = load("leaderboard.json", [])
     behav = load("behavior.json", {})
     skills = load("skills.json", {})
     ab = load("ablations.json", [])
     refs = load("refs.json", {})  # {baseline:{...}, oracle:{...}, model_list:[...]}
+    case = load("case_study.json", {})
     baseline_row = refs.get("baseline")
     oracle_row = refs.get("oracle")
 
     top_model, top_impact, n_beat, n_models = headline(board, baseline_row, oracle_row)
     model_list = ", ".join(refs.get("model_list", [r["model"] for r in board])) or \
         "seven Bailian-served models"
-    oracle_ceiling = f"{refs.get('oracle_broad', {}).get('impact_mean', 0):.0f}" \
-        if refs.get("oracle_broad") else "—"
+    spread = "—"
+    if board:
+        lo = min(r["impact_mean"] for r in board) or 1
+        spread = f"{max(r['impact_mean'] for r in board)/lo:.0f}×"
 
     html = PAGE.format(
         css=CSS,
         headline_model=top_model, headline_impact=top_impact,
-        oracle_ceiling=oracle_ceiling,
+        spread=spread,
         n_beat=n_beat, n_models=n_models,
         model_list=model_list,
         b_broad=f"{refs.get('baseline_broad', {}).get('impact_mean', 0):.0f}",
@@ -259,24 +296,30 @@ def build():
         board_table=leaderboard_table(board, baseline_row, oracle_row),
         ablation_table=ablation_table(ab),
         results_prose=results_prose(board, baseline_row, oracle_row, refs),
+        variance_prose=variance_prose(case),
         behavior_prose=behavior_prose(behav, board),
         chasing_prose=chasing_prose(behav, board),
         ablation_prose=ablation_prose(ab),
+        fig_variance=fig("fig_variance.png",
+                         "The variance decomposed. Left: Impact scales with the peak hotness "
+                         "a lab's papers actually ride — the seed sets which cluster a run can "
+                         "reach, the model sets how high within it. Right: on boom worlds, "
+                         "paper volume converts the boom into Impact. Cross = collapse.", 2),
         fig_traj=fig("fig_budget_traj.png",
                      "Lab budget over 60 months, all runs per model (log scale). "
                      "A cross marks a collapse (bankruptcy); the dashed line is the "
-                     "$600K starting fund.", 1),
+                     "$600K starting fund.", 5),
         fig_impact=fig("fig_impact_traj.png",
                        "Cumulative citations accrue late. Mean across seeds per model, "
                        "with the rule-based baseline dashed. Most Impact arrives in the "
                        "final years — the delayed-reward structure the benchmark is built "
-                       "around.", 2),
+                       "around.", 1),
         fig_behavior=fig("fig_behavior.png",
                          "Behavioral axes. Left: actions taken per simulated month — not "
                          "correlated with Impact. Right: papers per student-year, which "
                          "tracks the leaderboard: the gap is conversion, not activity.", 3),
         fig_skills=fig("fig_skills.png",
-                       "Four capability axes from the hidden eval log: mentoring "
+                       "Recovering the capability axes from the hidden eval log: mentoring "
                        "allocation efficiency (0.5 = random), topic anticipation (>0 = "
                        "enters before the boom), PhD attrition (lower better), and risk "
                        "calibration (bolder when affordable).", 4),
@@ -308,8 +351,8 @@ PAGE = """<title>PI-Bench — Can Agents Run a Research Lab?</title>
   <div class="headline-stats">
     <div class="stat"><div class="stat-num">{headline_impact}</div>
       <div class="stat-lab">best mean Impact<br><span>{headline_model}</span></div></div>
-    <div class="stat"><div class="stat-num">{oracle_ceiling}</div>
-      <div class="stat-lab">oracle ceiling<br><span>no model comes near</span></div></div>
+    <div class="stat"><div class="stat-num">{spread}</div>
+      <div class="stat-lab">spread, top to bottom<br><span>tiers overlap within seed variance</span></div></div>
     <div class="stat"><div class="stat-num">60</div>
       <div class="stat-lab">simulated months<br><span>{n_models} models &middot; 3 seeds</span></div></div>
   </div>
@@ -320,13 +363,22 @@ PAGE = """<title>PI-Bench — Can Agents Run a Research Lab?</title>
 <p class="abstract"><b>Abstract.</b> Language-model agents are competent at short,
 well-specified tasks, but a research career is not a task — it is a long chain of
 interdependent bets made under uncertainty, where feedback is slow and the field keeps
-shifting. <b>PI-Bench</b> stresses these capabilities together by simulating one of the most
-information-poor, delayed-reward jobs there is: running an academic lab for 60 months. The
-world is fully mechanistic (no LLM judge in the reward path), partially observable,
-non-stationary, and full of delayed, coupled consequences. Success is <b>Impact</b> —
-citations accrued plus a projection of published work's future citations — a score built
-so that abandoning the lab to hoard cash earns nothing. We evaluate {model_list} and find
-that most struggle to sustain a productive lab.</p>
+shifting. Real long-horizon agency demands a cluster of capabilities that current benchmarks
+test in isolation, if at all: <b>(1)</b> inferring hidden state from noisy, biased signals;
+<b>(2)</b> making irreversible commitments that cannot be unwound; <b>(3)</b> planning under
+delayed, heavy-tailed rewards; <b>(4)</b> budgeting two scarce resources at once; and
+<b>(5)</b> exploring a non-stationary environment before it is obviously worth it.
+<b>PI-Bench</b> stresses these together by simulating one of the most information-poor,
+delayed-reward jobs there is: running an academic lab for 60 months. The world is fully
+mechanistic (no LLM judge in the reward path), partially observable, non-stationary, and full
+of delayed, coupled consequences. Success is <b>Impact</b> — citations accrued plus a
+projection of published work's future citations — a score built so that abandoning the lab to
+hoard cash earns nothing. We evaluate {model_list}; Impact spans more than an order of
+magnitude, every model captures only a small fraction of the attainable citation ceiling, and
+— because a career turns on catching a single rare research boom — the scores are dominated by
+a heavy-tailed variance that a few seeds cannot resolve. We quantify each capability above from
+a hidden ground-truth log, closing the loop this abstract opens. PI-Bench is a step toward
+measuring the sustained, adaptive intelligence that long-horizon agency demands.</p>
 
 <h2><span class="sn">1</span> Introduction</h2>
 <p>Agents built on today's models can fix a GitHub issue, follow a support policy, or
@@ -418,23 +470,58 @@ baseline {b_broad}, oracle {o_broad} — as more stable reference points.</p>
 {results_prose}
 {fig_impact}
 
+<h3>The anatomy of the variance</h3>
+{variance_prose}
+{fig_variance}
+
 <h2><span class="sn">4</span> A look into agent behavior</h2>
+<p>Because the world is fully logged, we can open the trajectories and read what agents
+actually did. The single sharpest divide is whether a model treats the environment's hidden
+parameters as a <i>system to be reverse-engineered</i> or as random noise.</p>
+<p><b>Strong labs infer hidden structure from graded feedback and pivot.</b> Every top model
+treats a grant rejection as evidence about an unobserved reward function. Fable-5's memory at
+month 20 reads <i>"BSF rejected reasoning 2x → hypothesis BSF dislikes reasoning, trying
+ai4science,"</i> later refined from a conference report to <i>"BSF prefers theory/data_systems
+→ future BSF apps use data_systems."</i> GLM-5.2 reverse-engineers venue thresholds from
+reviewer scores — <i>"CLAR bar: 4.4–5.2 accepted, 3.7–4.7 rejected … TIF funds reasoning ~25%
+of the time"</i> — and every strong model models the pool-specific bias in applicant signals
+(<i>"elite pool inflated paper signals; intl/nontrad interviews trustworthy"</i>). This is
+explicit estimation of hidden decision boundaries and measurement bias — exactly the inference
+the benchmark is built to demand.</p>
+<p><b>Weak models substitute trial-and-error for a world model.</b> qwen-turbo wrote to its
+memory file exactly once in 293 turns and re-fired the identical grant proposal every month;
+it ended hoarding $741k having won six grants but published two papers and never hired a
+student — cash with no plan. deepseek spent 51% of its turns in API/SQL error loops (against
+1–4% for strong models), and thirty months in still had no team. A revealing edge case is
+qwen-plus, whose reasoning is genuinely strong — it hypothesizes hidden draft-generation rules
+correctly — yet it collapses by prioritizing student morale over runway, starting a project at
+$4.3k cash and burning into insolvency. Good memory is necessary but not sufficient; what
+tracks Impact is the <i>combination</i> the strong labs share — a persistent structured memory,
+hypotheses about hidden parameters updated from feedback, and low-error execution that leaves
+turn-budget for that reasoning.</p>
 {behavior_prose}
 {fig_behavior}
 
 <h3>Chasing hot topics vs. sitting on the cold bench</h3>
 {chasing_prose}
 
-<h3>Four capability axes</h3>
-<p>Beyond the headline, we measure four skills from a hidden eval log the agent never sees:
-<b>mentoring allocation efficiency</b> (does the
-agent spend its zero-sum mentoring hours on the students with the highest hidden return?),
-<b>topic anticipation</b> (does it enter topics before they heat, or chase what is already
-hot?), <b>PhD attrition</b> (the share of hires that quit before graduating — a proxy for
-the quality of an irreversible commitment), and <b>risk calibration</b> (does it take bolder
-projects when it can afford the variance?). Together they probe the core of the task:
-allocating a perishable budget and making irreversible bets on latent processes whose payoff
-is heavy-tailed and arrives across mismatched horizons.</p>
+<h3>Recovering the five capabilities — closing the loop</h3>
+<p>We now recover the capabilities the abstract enumerated, measuring each from a hidden
+eval log the agent never sees (four axes in Figure 4, plus a resource-utilization measure).
+<b>Mentoring allocation efficiency</b> — does the agent spend its zero-sum mentoring hours on
+the students with the highest hidden return? — instruments axis (1), inference of hidden
+state. <b>PhD attrition</b>, the share of hires that quit before graduating, is a proxy for
+axis (2), the quality of an irreversible commitment. <b>Risk calibration</b> — does it take
+bolder projects only when it can afford the variance? — probes axis (3), planning under
+heavy-tailed reward. Axis (4), the <b>dual budget</b>, is not a metric but a measured fact:
+attention genuinely binds for agents that build a lab — the top model runs at 77% mean
+attention utilization and hits the ceiling in 51% of its months, while the models that barely
+staff a lab sit near 15–27% — so the second budget is a live constraint precisely for the
+ambitious strategies, even though it never binds the conservative baseline (§5). And
+<b>topic anticipation</b> — does it enter a topic before it heats, or chase what is already
+hot? — measures axis (5). The stronger models score higher on allocation and lower on
+attrition; but anticipation runs near zero for every model, the one axis on which none
+approaches informed play.</p>
 {fig_skills}
 {fig_traj}
 
@@ -445,17 +532,66 @@ is heavy-tailed and arrives across mismatched horizons.</p>
 modified world configurations, mean over eight seeds. The horizon ablation isolates the
 delayed-reward structure; freezing the field removes the boom-timing upside.</p>
 
-<h2><span class="sn">6</span> Limitations &amp; conclusion</h2>
-<p>We approximate a research career and gaps remain: the quality of research is abstracted
-to a scalar; we omit teaching, collaboration politics, and the human texture of mentorship
-beyond a morale variable; three seeds report a mean with spread but do not settle the
-ranking of close models; and results are entangled with the harness and a model's
-willingness to spend tokens, which we report to keep visible. Still, the headline holds:
-current agents can take plausible individual actions — interview a candidate, submit a
-paper, write a proposal — but struggle to compound them into a lab that grows under delayed
-feedback, hidden state, and a shifting field. Measuring that gap is the point.</p>
+<h2><span class="sn">6</span> Related work</h2>
+<p><b>General agent evaluation.</b> Benchmarks such as SWE-bench, WebArena, τ-bench, GAIA,
+and AppWorld measure valuable real-world skills — resolving issues, navigating sites,
+following tool-use policies. <i>However</i>, they are scoped to short, single-episode tasks
+with quickly observed outcomes: the agent gets a clear goal, acts for a bounded horizon, and
+is graded on completion. They do not test whether an agent can sustain a coherent strategy as
+its own earlier decisions reshape a stateful world over years.</p>
+<p><b>Long-horizon and economic agency.</b> A newer line places agents in persistent
+environments — running a vending machine over many days, closing monthly books, operating a
+simulated business. <i>However</i>, these involve narrower decisions or largely stable,
+observable dynamics, and typically grade a single liquid resource. PI-Bench differs on the
+axis that matters most here: it is an <i>illiquid, delayed, people-driven</i> economy where
+bets cannot be unwound, the reward is heavy-tailed and arrives across mismatched horizons,
+and success requires inferring hidden state and a shifting field rather than optimizing a
+dense, observable signal. The closest prior work, CEO-Bench (Chen et al., 2026), established
+this mechanistic long-horizon shape for a startup; PI-Bench is its complement in the research
+economy, and adds a second scarce resource (attention), an irreversible people-centric asset
+base, and a harvest-resistant score.</p>
 
-<h2><span class="sn">A</span> Adversarial validation</h2>
+<h2><span class="sn">7</span> Limitations &amp; conclusion</h2>
+<p><b>Limitations.</b> We name our gaps plainly. (i) Research <b>quality is a scalar</b> — we
+model impact, not the substance of ideas — and we omit teaching, collaboration politics, and
+the human texture of mentorship beyond a morale variable. (ii) The <b>oracle is not a proven
+optimum</b>: it plays with hidden information through a fixed heuristic, and the strongest model
+exceeds it on boom seeds; our headroom claim therefore rests on the transparent citation-based
+ceiling (Appendix), not on the oracle. (iii) <b>Three seeds</b> give a mean with wide spread
+but do not settle the ranking of adjacent models; the robust claims are the tier separation and
+the near-zero anticipation axis, and we are extending all models to the eight-seed grid. (iv)
+Results are <b>entangled with one harness</b>: long-horizon coherence lives in a self-maintained
+memory file, and while we ablate that component (§5) and hold the scaffold, tool set, and
+context policy identical across models — the winner uses fewer tokens than most losers, so the
+ranking is not a trivial compute artifact — a full cross-scaffold swap remains future work. (v)
+Cost is reported in <b>tokens, not dollars</b>, so a cross-provider price comparison is out of
+scope.</p>
+<p><b>Conclusion.</b> PI-Bench shows a gap between models' local tool competence and the
+sustained judgment a five-year project demands: agents take plausible individual actions but
+struggle to compound them into a lab that grows under delayed feedback, hidden state, and a
+shifting field. Two findings sharpen the picture. First, the reward is <b>heavy-tailed</b> — a
+career turns on catching one rare boom — so a single number, or a best-of-N run, misleads, and
+long-horizon benchmarks must report the per-seed spread. Second, the highest-value skill,
+<b>anticipating</b> a boom rather than chasing it, is absent in every model evaluated. Closing
+those gaps is what it will take to build agents that steer long-running efforts, not just answer
+requests.</p>
+
+<h2><span class="sn">A</span> Attainable-Impact ceiling</h2>
+<p>Rather than a hand-tuned upper-bound heuristic, we read the ceiling straight off the
+citation mechanics. A published paper accrues citations at a rate
+<code class="inl">v · e^{{0.42(q−5)}} · H_k(t) · age(t) · (1 + 0.08(R−R_0))</code> per month. On
+seed 101 a topic reaches hotness <code class="inl">H = 6.0</code>; substituting a top-venue
+paper (<code class="inl">v = 3.0</code>) of near-maximal quality (<code class="inl">q = 9</code>)
+under high reputation and integrating over an optimal publication month plus the 36-month
+projection window yields <b>≈ 3,300 projected citations for a single paper</b> — already close
+to the entire score of the best observed run (4,078). A productive lab that places even a
+handful of such papers reaches the tens of thousands. This is a loose bound (it ignores
+attention, review, and scooping frictions), but its purpose is only to show that the best
+observed Impact captures a small fraction of what the reward mechanics permit — the benchmark
+is far from saturated. The computation is fully determined by the released config; no free
+friction factor is introduced.</p>
+
+<h2><span class="sn">B</span> Adversarial validation</h2>
 <p>Before running experiments we subjected the simulator and harness to a multi-agent
 adversarial review across seven lenses (spec conformance, correctness, hidden-information
 leaks, economic and scoring exploits, determinism, harness security), each finding verified

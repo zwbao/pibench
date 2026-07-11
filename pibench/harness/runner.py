@@ -56,6 +56,9 @@ _SAFE_BUILTIN_NAMES = (
 
 def make_exec_env(api: LabAPI, memory_ref: dict):
     def write_memory(text):
+        if memory_ref.get("frozen"):
+            print("[memory is disabled in this run]")
+            return
         text = str(text)
         if len(text) > MAX_MEMORY_CHARS:
             text = text[:MAX_MEMORY_CHARS]
@@ -112,13 +115,18 @@ def run_code(code: str, env: dict) -> str:
 
 def run_episode(model: str, seed: int, out_dir: str, api_key: str, base_url: str,
                 months: int = 60, max_turns: int = 8, temperature: float = 0.4,
-                verbose: bool = True) -> dict:
+                verbose: bool = True, memory_enabled: bool = True) -> dict:
     os.makedirs(out_dir, exist_ok=True)
     world = World(seed)
     world.cfg.months = months
     api = LabAPI(world)
     client = LLMClient(model, api_key, base_url, temperature=temperature)
-    memory_ref = {"text": "(empty — use write_memory(text) to save notes)"}
+    if memory_enabled:
+        memory_ref = {"text": "(empty — use write_memory(text) to save notes)"}
+    else:
+        # harness ablation: persistent memory disabled — write_memory does nothing and
+        # the prompt always shows an empty memory, isolating the value of the scaffold
+        memory_ref = {"text": "(memory disabled in this harness variant)", "frozen": True}
     env = make_exec_env(api, memory_ref)
     transcript_path = os.path.join(out_dir, "transcript.jsonl")
     tlog = open(transcript_path, "a")

@@ -93,11 +93,45 @@ def arch_svg():
             + "".join(rows) + "</svg>")
 
 
+def sparkline(series, collapsed):
+    """Inline SVG budget trajectory: linear, with a zero line and an end dot."""
+    W, H, pad = 260, 46, 4
+    lo, hi = min(series + [0]), max(series + [0])
+    rng = (hi - lo) or 1
+    n = len(series)
+    def x(i): return pad + (W - 2 * pad) * i / max(1, n - 1)
+    def y(v): return H - pad - (H - 2 * pad) * (v - lo) / rng
+    d = "M" + " L".join(f"{x(i):.1f},{y(v):.1f}" for i, v in enumerate(series))
+    zy = y(0)
+    ex, ey = x(n - 1), y(series[-1])
+    return (f'<svg class="spark" viewBox="0 0 {W} {H}" preserveAspectRatio="none">'
+            f'<line class="zero" x1="{pad}" y1="{zy:.1f}" x2="{W-pad}" y2="{zy:.1f}"/>'
+            f'<path d="{d}"/>'
+            f'<circle class="end{" bad" if collapsed else ""}" cx="{ex:.1f}" cy="{ey:.1f}" r="3.5"/></svg>')
+
+
+def case_study_html(case):
+    if not case:
+        return ""
+    def col(side, cls):
+        c = case[side]
+        ms = "".join(
+            f'<li class="tag-{m.get("tag","")}"><span class="mo">m{m["m"]}</span>{m["t"]}</li>'
+            for m in c["milestones"])
+        return (f'<div class="case-col {cls}"><div class="oc">{c["outcome"]}</div>'
+                f'<div class="sub">seed {c["seed"]} · {c["label"]}</div>'
+                f'{sparkline(c["budget_series"], c["collapsed"])}'
+                f'<ul class="ms">{ms}</ul></div>')
+    return (f'<div class="case">{col("left","win")}{col("right","lose")}</div>'
+            f'<div class="case-moral">{case["moral"]}</div>')
+
+
 def build():
     board = load("leaderboard.json", [])
     skills = load("skills.json", {})
     behav = load("behavior.json", {})
     refs = load("refs.json", {})
+    case = load("case_study.json", {})
     traj = load("trajectories.json", {"months": [], "series": [], "baseline": None})
     baseline = refs.get("baseline", {})
     oracle = refs.get("oracle", {})
@@ -120,8 +154,8 @@ def build():
     refs_rows = [
         dict(model="rule-based baseline", impact=baseline.get("impact_mean", 0),
              collapse=baseline.get("collapsed", 0), n=baseline.get("n", 0), note="no LLM · held-out"),
-        dict(model="oracle (full hidden state)", impact=oracle.get("impact_mean", 0),
-             collapse=oracle.get("collapsed", 0), n=oracle.get("n", 0), note="upper bound"),
+        dict(model="oracle (informed reference)", impact=oracle.get("impact_mean", 0),
+             collapse=oracle.get("collapsed", 0), n=oracle.get("n", 0), note="full-info policy"),
     ]
     payload = dict(models=lb_rows, refs=refs_rows, traj=traj, palette=PALETTE)
 
@@ -133,6 +167,8 @@ def build():
         "%%DATA%%": json.dumps(payload, ensure_ascii=False),
         "%%TOP_MODEL%%": top["model"], "%%TOP_IMPACT%%": f"{top['impact_mean']:.0f}",
         "%%ORACLE%%": f"{oracle_broad.get('impact_mean', 0):.0f}",
+        "%%SPREAD%%": (f"{max(r['impact'] for r in lb_rows)/max(1,min(r['impact'] for r in lb_rows)):.0f}×"
+                       if lb_rows else "—"),
         "%%BASELINE_BROAD%%": f"{baseline_broad.get('impact_mean', 0):.0f}",
         "%%NMODELS%%": str(n_models),
         "%%ARCH%%": arch_svg(),
@@ -144,6 +180,12 @@ def build():
             "<b>Activity is not the bottleneck; conversion is.</b> Left: actions per month, "
             "uncorrelated with Impact. Right: papers per student-year, which tracks the leaderboard."),
     }
+    repl["%%FIG_VARIANCE%%"] = fig("fig_variance.png",
+        "<b>The variance decomposed.</b> Left: Impact scales with the hotness the agent's papers "
+        "actually rode — the seed sets which cluster (≈1.5 / 3 / 6) a run can reach, the model "
+        "sets how high within it. Right: on boom worlds, paper volume converts the boom into "
+        "Impact. × = collapsed.")
+    repl["%%CASE_STUDY%%"] = case_study_html(case)
     for k, v in repl.items():
         html = html.replace(k, v)
     os.makedirs(SITE, exist_ok=True)
@@ -186,8 +228,8 @@ TEMPLATE = r"""<title>PI-Bench · Can Agents Run a Research Lab?</title>
     <div class="stats">
       <div class="stat"><div class="n">%%TOP_IMPACT%%</div>
         <div class="l">best mean Impact<br><b>%%TOP_MODEL%%</b></div></div>
-      <div class="stat"><div class="n">%%ORACLE%%</div>
-        <div class="l">oracle ceiling<br><b>no model comes near</b></div></div>
+      <div class="stat"><div class="n">%%SPREAD%%</div>
+        <div class="l">spread, top to bottom<br><b>tiers overlap within seed variance</b></div></div>
       <div class="stat"><div class="n">60</div>
         <div class="l">simulated months<br><b>%%NMODELS%% models · 3 seeds</b></div></div>
     </div>
@@ -288,12 +330,23 @@ q = <span class="kw">query</span>(<span class="str">"SELECT topic, SUM(preprint_
 
     <h3 style="margin-top:2.4rem">2 · The variance is structure, not noise</h3>
     <p class="read">Each model's three runs are plotted on a log Impact axis — three dots, and a
-    bar at their mean. The dots span orders of magnitude: most of a lab's Impact comes from
-    catching a topic <i>boom</i>, a rare high-magnitude event, so a career's payoff is
-    heavy-tailed, much as real academic impact is. With three seeds the ranking of adjacent
-    models is genuinely unsettled — which is exactly why we report the spread and a mean, never
-    a best-of-N. Hover a dot for its seed.</p>
+    bar at their mean. The dots span orders of magnitude. Hover a dot for its seed.</p>
     <div class="chart" id="c-strip"></div>
+    <p class="read" style="margin-top:1.4rem">Reconstructing every run's full world (the
+    simulator is deterministic, so we can replay it exactly at zero cost) shows the variance is
+    <b>two multiplicative layers</b>. Most Impact comes from riding a topic <i>boom</i> — a rare,
+    high-magnitude event. Whether a boom exists is <b>exogenous</b>, set by the seed; how much a
+    model <b>capitalizes</b> on it — by placing enough good papers in the hot topic and surviving
+    to publish them — is the skill. Heavy-tailed models commit hard and produce many papers, so
+    they explode on a lucky seed and crash on an unlucky one; stable models under-commit, capping
+    both the upside and the downside.</p>
+    %%FIG_VARIANCE%%
+
+    <h4 style="margin-top:2rem;font-family:var(--sans);font-size:1rem;color:var(--ink)">One model, two fates</h4>
+    <p class="read">The clearest illustration is a single model — the top-scoring
+    <b>claude-fable-5</b> — on two different worlds. Its own monthly memory notes tell the story;
+    the sparkline is its cash trajectory.</p>
+    %%CASE_STUDY%%
 
     <h3 style="margin-top:2.4rem">3 · Everyone chases hot topics; no one anticipates them</h3>
     <p class="read">Some PIs chase fashionable topics; some sit on a cold bench betting on
@@ -305,9 +358,18 @@ q = <span class="kw">query</span>(<span class="str">"SELECT topic, SUM(preprint_
     it, and that is where the largest, most durable Impact lives.</p>
     %%FIG_SKILLS%%
 
-    <h3 style="margin-top:2.4rem">4 · Activity is not the bottleneck — conversion is</h3>
-    <p class="read">Weak models issue just as many actions per month as strong ones; what
-    separates them is turning those actions into papers that actually get in and get cited.</p>
+    <h3 style="margin-top:2.4rem">4 · Strong labs reverse-engineer the hidden world</h3>
+    <p class="read">Because every run is fully logged, we can read what agents actually did.
+    The sharpest divide: strong models treat the environment's hidden parameters as a
+    <b>system to reverse-engineer</b>, not as noise. They infer a grant agency's tastes from
+    rejections (Fable-5's memory: <i>"BSF rejected reasoning 2× → hypothesis BSF dislikes
+    reasoning, trying ai4science"</i>), back out venue thresholds from reviewer scores
+    (GLM-5.2: <i>"CLAR bar: 4.4–5.2 accepted"</i>), and correct the pool-specific bias in
+    applicant signals. Weak models substitute trial-and-error: qwen-turbo wrote to memory once
+    in 293 turns and hoarded $741k with two papers and no students; deepseek spent half its
+    turns in API errors and had no team thirty months in. And <b>activity is not the
+    bottleneck</b> — weak models act just as often; what they cannot do is convert actions into
+    papers that get in and get cited.</p>
     %%FIG_BEHAVIOR%%
   </div>
 </section>
@@ -318,10 +380,11 @@ q = <span class="kw">query</span>(<span class="str">"SELECT topic, SUM(preprint_
     <h2>What PI-Bench shows</h2>
     <div class="takeaways">
       <div class="take"><div class="num">01</div><h3>A wide, honest gap</h3>
-        <p>Impact spans more than an order of magnitude across models, and the strongest still
-        fall well short of an oracle that plays with full information. Current agents take
-        plausible individual actions but cannot yet compound them into a lab that grows under
-        delayed feedback, hidden state, and a shifting field.</p></div>
+        <p>Impact spans more than an order of magnitude across models, and every model captures
+        only a small fraction of the attainable citation ceiling (read straight off the reward
+        mechanics — tens of thousands, vs. a best run near 4,000). Current agents take plausible
+        individual actions but cannot yet compound them into a lab that grows under delayed
+        feedback, hidden state, and a shifting field.</p></div>
       <div class="take"><div class="num">02</div><h3>Reward is heavy-tailed</h3>
         <p>A five-year career is dominated by whether the agent catches one rare research boom.
         This makes a single number — or a best-of-N run — actively misleading, and argues that
