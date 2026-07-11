@@ -308,6 +308,46 @@ def behavioral_metrics(runs: dict) -> dict:
     return out
 
 
+def export_chart_data(runs: dict, order: list):
+    """Emit paper/trajectories.json for the site's web-native interactive charts:
+    per-model mean cumulative-citation series over months, per-seed final Impact,
+    per-model budget series, plus the baseline citation series."""
+    T = 60
+    series = []
+    for i, model in enumerate(order):
+        rr = runs.get(model, [])
+        if not rr:
+            continue
+        cmat = np.full((len(rr), T), np.nan)
+        bmat = np.full((len(rr), T), np.nan)
+        for k, r in enumerate(rr):
+            cites = [s["citations"] for s in r["stats"]]
+            budg = [max(1.0, s["budget"]) for s in r["stats"]]
+            n = min(T, len(cites))
+            cmat[k, :n] = cites[:n]
+            bmat[k, :n] = budg[:n]
+            if n < T:
+                cmat[k, n:] = cites[n - 1] if cites else 0
+                bmat[k, n:] = budg[n - 1] if budg else 1
+        series.append(dict(
+            model=model, colorIndex=i,
+            cites=[round(float(x), 1) for x in np.nanmean(cmat, axis=0)],
+            budget=[round(float(x)) for x in np.nanmean(bmat, axis=0)],
+            seedsImpact=sorted([r["result"]["impact"] for r in rr], reverse=True),
+            collapse=sum(r["result"]["collapsed"] for r in rr),
+        ))
+    baseline_series = None
+    try:
+        bm, bmean = baseline_reference(sorted({r["seed"] for rr in runs.values() for r in rr}))
+        baseline_series = [round(float(x), 1) for x in bmean]
+    except Exception as e:
+        print("baseline series skipped:", e)
+    out = dict(months=list(range(1, T + 1)), series=series, baseline=baseline_series)
+    with open(os.path.join(ROOT, "paper", "trajectories.json"), "w") as f:
+        json.dump(out, f)
+    print("wrote paper/trajectories.json")
+
+
 def fig_skills(runs: dict, order: list, skills: dict):
     """Four capability axes (CEO-Bench Fig-12 style small multiples)."""
     axes_spec = [
@@ -385,6 +425,7 @@ if __name__ == "__main__":
     skills = skill_metrics(runs)
     with open(os.path.join(ROOT, "paper", "skills.json"), "w") as f:
         json.dump(skills, f, indent=2)
+    export_chart_data(runs, order)
     fig_trajectories(runs, order)
     fig_impact(runs, order)
     fig_behavior(runs, order, behav)

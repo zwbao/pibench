@@ -1,0 +1,62 @@
+{
+  "anthropic/claude-fable-5": {
+    "alloc_efficiency": 0.617,
+    "risk_calibration": -0.245,
+    "anticipation": -0.033,
+    "phd_early_quit_rate": 0.667
+  },
+  "anthropic/claude-opus-4.8": {
+    "alloc_efficiency": 0.559,
+    "risk_calibration": -0.067,
+    "anticipation": -0.045,
+    "phd_early_quit_rate": 1.0
+  },
+  "anthropic/claude-sonnet-5": {
+    "alloc_efficiency": 0.561,
+    "risk_calibration": -0.029,
+    "anticipation": -0.243,
+    "phd_early_quit_rate": 0.565
+  },
+  "deepseek-v3.2": {
+    "alloc_efficiency": 0.806,
+    "risk_calibration": -0.25,
+    "anticipation": 0.031,
+    "phd_early_quit_rate": 0.583
+  },
+  "kimi-k2.6": {
+    "alloc_efficiency": 0.914,
+    "risk_calibration": 0.667,
+    "anticipation": -0.079,
+    "phd_early_quit_rate": 0.5
+  },
+  "openai/gpt-5.6-sol": {
+    "alloc_efficiency": 0.593,
+    "risk_calibration": -0.194,
+    "anticipation": -0.046,
+    "phd_early_quit_rate": 0.306
+  },
+  "openai/gpt-5.6-terra": {
+    "alloc_efficiency": 0.677,
+    "risk_calibration": 0.728,
+    "anticipation": 0.176,
+    "phd_early_quit_rate": 0.464
+  },
+  "qwen-plus": {
+    "alloc_efficiency": 0.462,
+    "risk_calibration": -0.25,
+    "anticipation": 0.062,
+    "phd_early_quit_rate": 0.75
+  },
+  "qwen-turbo": {
+    "alloc_efficiency": 0.483,
+    "risk_calibration": null,
+    "anticipation": -0.319,
+    "phd_early_quit_rate": null
+  },
+  "qwen3.7-plus": {
+    "alloc_efficiency": 0.575,
+    "risk_calibration": 0.5,
+    "anticipation": -0.15,
+    "phd_early_quit_rate": 0.542
+  }
+}
