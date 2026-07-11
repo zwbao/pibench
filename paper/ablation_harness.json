@@ -1,0 +1,21 @@
+{
+ "model": "qwen-plus",
+ "with_memory": {
+  "per_seed": [
+   172,
+   51,
+   15
+  ],
+  "mean": 80,
+  "collapse": 1
+ },
+ "no_memory": {
+  "per_seed": [
+   466,
+   101,
+   40
+  ],
+  "mean": 202,
+  "collapse": 1
+ }
+}

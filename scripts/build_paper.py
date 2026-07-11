@@ -270,6 +270,26 @@ boom seed; the eight-seed grid that would tighten the adjacent ranks is stated a
 work.</p>"""
 
 
+def harness_prose(ha):
+    if not ha:
+        return ""
+    wm, nm = ha["with_memory"], ha["no_memory"]
+    return f"""<h3>Harness sensitivity</h3>
+<p>Agent scores are known to depend on the execution scaffold, so we ablate the single most
+load-bearing component of ours: the persistent memory file that carries long-horizon state
+across monthly context refreshes. Disabling it (write_memory becomes a no-op; the prompt always
+shows an empty memory) for <b>{ha['model']}</b> changes mean Impact from {wm['mean']} to
+{nm['mean']} — that is, removing the memory scaffold does <i>not</i> lower the score, and
+nominally raises it ({', '.join(map(str, wm['per_seed']))} → {', '.join(map(str, nm['per_seed']))}
+per seed). Two things follow. First, the ranking is not a trivial artifact of the scaffold
+handing the model state: when the state hand-off is removed, this model does at least as well.
+Second, it nuances §4 — memory <i>use</i> correlates with capability, but for a mid-tier model
+whose notes are low-quality, maintaining them is not causally load-bearing and may even cost
+turn-budget. The more informative test is a memory-heavy strong model, and a full cross-scaffold
+swap (a different runner or context budget) would bound harness dependence further; both are
+future work, so rankings should be read within this fixed harness.</p>"""
+
+
 def variance_prose(case):
     if not case:
         return "<p class='muted'>[variance analysis pending]</p>"
@@ -304,6 +324,7 @@ def build():
     refs = load("refs.json", {})  # {baseline:{...}, oracle:{...}, model_list:[...]}
     case = load("case_study.json", {})
     decomp = load("variance_decomp.json", {})
+    harness = load("ablation_harness.json", {})
     baseline_row = refs.get("baseline")
     oracle_row = refs.get("oracle")
 
@@ -328,6 +349,7 @@ def build():
         results_prose=results_prose(board, baseline_row, oracle_row, refs),
         variance_prose=variance_prose(case),
         decomp_prose=decomp_prose(decomp),
+        harness_prose=harness_prose(harness),
         behavior_prose=behavior_prose(behav, board),
         chasing_prose=chasing_prose(behav, board),
         ablation_prose=ablation_prose(ab),
@@ -564,6 +586,7 @@ approaches informed play.</p>
 <p class="cap-note"><b>Table 2.</b> Deterministic ablations: the rule-based baseline under
 modified world configurations, mean over eight seeds. The horizon ablation isolates the
 delayed-reward structure; freezing the field removes the boom-timing upside.</p>
+{harness_prose}
 
 <h2><span class="sn">6</span> Related work</h2>
 <p><b>General agent evaluation.</b> Benchmarks such as SWE-bench, WebArena, τ-bench, GAIA,

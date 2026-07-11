@@ -452,6 +452,20 @@ runway the agent has to protect.</p>
 <p class="cap-note"><b>Table 2.</b> Deterministic ablations: the rule-based baseline under
 modified world configurations, mean over eight seeds. The horizon ablation isolates the
 delayed-reward structure; freezing the field removes the boom-timing upside.</p>
+<h3>Harness sensitivity</h3>
+<p>Agent scores are known to depend on the execution scaffold, so we ablate the single most
+load-bearing component of ours: the persistent memory file that carries long-horizon state
+across monthly context refreshes. Disabling it (write_memory becomes a no-op; the prompt always
+shows an empty memory) for <b>qwen-plus</b> changes mean Impact from 80 to
+202 — that is, removing the memory scaffold does <i>not</i> lower the score, and
+nominally raises it (172, 51, 15 → 466, 101, 40
+per seed). Two things follow. First, the ranking is not a trivial artifact of the scaffold
+handing the model state: when the state hand-off is removed, this model does at least as well.
+Second, it nuances §4 — memory <i>use</i> correlates with capability, but for a mid-tier model
+whose notes are low-quality, maintaining them is not causally load-bearing and may even cost
+turn-budget. The more informative test is a memory-heavy strong model, and a full cross-scaffold
+swap (a different runner or context budget) would bound harness dependence further; both are
+future work, so rankings should be read within this fixed harness.</p>
 
 <h2><span class="sn">6</span> Related work</h2>
 <p><b>General agent evaluation.</b> Benchmarks such as SWE-bench, WebArena, τ-bench, GAIA,
