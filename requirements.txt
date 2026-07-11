@@ -1,0 +1,3 @@
+numpy>=1.24
+# matplotlib is only needed for scripts/analyze.py (figure generation)
+matplotlib>=3.7

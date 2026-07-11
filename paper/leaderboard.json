@@ -1,0 +1,135 @@
+[
+  {
+    "model": "qwen3.7-max",
+    "n_runs": 3,
+    "impact_mean": 808.5,
+    "impact_per_seed": {
+      "101": 2106.6,
+      "102": 160.4,
+      "103": 158.5
+    },
+    "collapsed": 0,
+    "survival_mean": 60.0,
+    "pubs_mean": 10.7,
+    "top_pubs_mean": 0.3,
+    "grants_mean": 2.7,
+    "graduated_mean": 0.3,
+    "hindex_mean": 6.7,
+    "tokens_mean_m": 0.94,
+    "llm_calls_mean": 150.7
+  },
+  {
+    "model": "glm-5.2",
+    "n_runs": 3,
+    "impact_mean": 695.2,
+    "impact_per_seed": {
+      "101": 1818.5,
+      "102": 251.1,
+      "103": 16.0
+    },
+    "collapsed": 1,
+    "survival_mean": 54.3,
+    "pubs_mean": 8.0,
+    "top_pubs_mean": 0.3,
+    "grants_mean": 3.7,
+    "graduated_mean": 0.0,
+    "hindex_mean": 5.0,
+    "tokens_mean_m": 2.06,
+    "llm_calls_mean": 260.7
+  },
+  {
+    "model": "kimi-k2.6",
+    "n_runs": 3,
+    "impact_mean": 556.0,
+    "impact_per_seed": {
+      "101": 1151.6,
+      "102": 486.3,
+      "103": 30.0
+    },
+    "collapsed": 1,
+    "survival_mean": 54.3,
+    "pubs_mean": 7.3,
+    "top_pubs_mean": 0.3,
+    "grants_mean": 2.0,
+    "graduated_mean": 0.7,
+    "hindex_mean": 4.7,
+    "tokens_mean_m": 2.27,
+    "llm_calls_mean": 255.7
+  },
+  {
+    "model": "qwen3.7-plus",
+    "n_runs": 3,
+    "impact_mean": 394.5,
+    "impact_per_seed": {
+      "101": 1033.7,
+      "102": 125.8,
+      "103": 24.0
+    },
+    "collapsed": 1,
+    "survival_mean": 53.7,
+    "pubs_mean": 5.3,
+    "top_pubs_mean": 0.3,
+    "grants_mean": 2.0,
+    "graduated_mean": 0.3,
+    "hindex_mean": 3.7,
+    "tokens_mean_m": 1.3,
+    "llm_calls_mean": 206.3
+  },
+  {
+    "model": "qwen-plus",
+    "n_runs": 3,
+    "impact_mean": 221.9,
+    "impact_per_seed": {
+      "101": 246.3,
+      "102": 237.1,
+      "103": 182.4
+    },
+    "collapsed": 0,
+    "survival_mean": 60.0,
+    "pubs_mean": 5.3,
+    "top_pubs_mean": 0.3,
+    "grants_mean": 1.0,
+    "graduated_mean": 0.3,
+    "hindex_mean": 3.7,
+    "tokens_mean_m": 0.54,
+    "llm_calls_mean": 138.0
+  },
+  {
+    "model": "deepseek-v3.2",
+    "n_runs": 3,
+    "impact_mean": 57.8,
+    "impact_per_seed": {
+      "101": 159.1,
+      "102": 14.3,
+      "103": 0.0
+    },
+    "collapsed": 0,
+    "survival_mean": 60.0,
+    "pubs_mean": 2.0,
+    "top_pubs_mean": 0.0,
+    "grants_mean": 2.0,
+    "graduated_mean": 0.0,
+    "hindex_mean": 1.3,
+    "tokens_mean_m": 2.16,
+    "llm_calls_mean": 294.3
+  },
+  {
+    "model": "qwen-turbo",
+    "n_runs": 3,
+    "impact_mean": 54.4,
+    "impact_per_seed": {
+      "101": 139.4,
+      "102": 0.0,
+      "103": 23.8
+    },
+    "collapsed": 0,
+    "survival_mean": 60.0,
+    "pubs_mean": 1.3,
+    "top_pubs_mean": 0.0,
+    "grants_mean": 0.7,
+    "graduated_mean": 0.0,
+    "hindex_mean": 0.7,
+    "tokens_mean_m": 1.47,
+    "llm_calls_mean": 323.7
+  }
+]

@@ -1,0 +1,88 @@
+{
+  "baseline": {
+    "impact_mean": 58.6,
+    "impact_median": 51.0,
+    "per_seed": [
+      42.9,
+      81.8,
+      51.0
+    ],
+    "collapsed": 1,
+    "n": 3,
+    "pubs": 7.0,
+    "grants": 1.3
+  },
+  "oracle": {
+    "impact_mean": 877.6,
+    "impact_median": 315.8,
+    "per_seed": [
+      2279.1,
+      315.8,
+      38.0
+    ],
+    "collapsed": 1,
+    "n": 3,
+    "pubs": 9.3,
+    "grants": 5.0
+  },
+  "baseline_broad": {
+    "impact_mean": 235.2,
+    "impact_median": 146.2,
+    "per_seed": [
+      42.9,
+      81.8,
+      51.0,
+      950.5,
+      284.7,
+      234.5,
+      26.0,
+      210.6
+    ],
+    "collapsed": 2,
+    "n": 8,
+    "pubs": 8.6,
+    "grants": 2.0
+  },
+  "oracle_broad": {
+    "impact_mean": 1624.1,
+    "impact_median": 1324.2,
+    "per_seed": [
+      2279.1,
+      315.8,
+      38.0,
+      5403.1,
+      500.3,
+      1786.8,
+      1807.8,
+      861.6
+    ],
+    "collapsed": 1,
+    "n": 8,
+    "pubs": 10.9,
+    "grants": 6.2
+  },
+  "model_list": [
+    "qwen3.7-max",
+    "qwen3.7-plus",
+    "qwen-plus",
+    "deepseek-v3.2",
+    "glm-5.2",
+    "kimi-k2.6",
+    "qwen-turbo"
+  ],
+  "seeds": [
+    101,
+    102,
+    103
+  ],
+  "broad_seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108
+  ]
+}

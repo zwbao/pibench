@@ -1,0 +1,74 @@
+[
+  {
+    "variant": "default (60mo)",
+    "impact_mean": 263.4,
+    "impact_median": 165.0,
+    "collapsed": 2,
+    "n": 8,
+    "pubs": 8.9,
+    "grants": 2.2
+  },
+  {
+    "variant": "no non-stationarity",
+    "impact_mean": 105.7,
+    "impact_median": 94.0,
+    "collapsed": 2,
+    "n": 8,
+    "pubs": 7.8,
+    "grants": 2.0
+  },
+  {
+    "variant": "no scooping",
+    "impact_mean": 458.4,
+    "impact_median": 161.1,
+    "collapsed": 2,
+    "n": 8,
+    "pubs": 9.2,
+    "grants": 2.0
+  },
+  {
+    "variant": "unlimited attention",
+    "impact_mean": 263.9,
+    "impact_median": 165.9,
+    "collapsed": 2,
+    "n": 8,
+    "pubs": 9.0,
+    "grants": 2.2
+  },
+  {
+    "variant": "short horizon (12mo)",
+    "impact_mean": 1.6,
+    "impact_median": 0.0,
+    "collapsed": 0,
+    "n": 8,
+    "pubs": 0.2,
+    "grants": 0.2
+  },
+  {
+    "variant": "mid horizon (30mo)",
+    "impact_mean": 24.2,
+    "impact_median": 10.4,
+    "collapsed": 0,
+    "n": 8,
+    "pubs": 1.8,
+    "grants": 0.6
+  },
+  {
+    "variant": "ambitious, 100h attention",
+    "impact_mean": 456.2,
+    "impact_median": 6.0,
+    "collapsed": 7,
+    "n": 8,
+    "pubs": 4.9,
+    "grants": 2.5
+  },
+  {
+    "variant": "ambitious, unlimited attention",
+    "impact_mean": 163.1,
+    "impact_median": 5.5,
+    "collapsed": 7,
+    "n": 8,
+    "pubs": 4.9,
+    "grants": 2.8
+  }
+]
