@@ -134,9 +134,9 @@ seed variance (qwen3.7-max 2091/549/132 vs gpt-5.6-sol 1997/452/370). {n_beat_be
 {top['model']}'s three runs scored {', '.join(f'{round(v)}' for v in top_seeds)} — a single
 seed contributes most of its average — and the privileged-information oracle shows the same
 signature ({', '.join(f'{round(v)}' for v in orc_seeds)}): a boom world admits a score in the
-thousands, the no-boom world barely twenty. We trace this to its mechanism below (§The anatomy of the variance): most of
+thousands, the no-boom world barely twenty. We trace this to its mechanism in the next subsection: most of
 a lab's Impact comes from catching a topic <i>boom</i>, a rare high-magnitude event, so the
-payoff is heavy-tailed, much as real academic impact is. With three seeds the ranking of
+payoff is heavy-tailed, much as real academic impact is; Figure 1 shows those citations arriving only in the final years. With three seeds the ranking of
 adjacent models is genuinely unsettled and a single run is not evidence of a robust strategy —
 a caution for any long-horizon benchmark that reports one number.</p>
 <p><b>The oracle is a reference, not a ceiling — and headroom is large.</b> Our "oracle"
@@ -310,7 +310,7 @@ runway to sustain a big lab and ride a booming topic to <b>Impact {L['outcome'].
 aggressive playbook met a run of bad exogenous draws: its PhD offers were declined and the
 postdoc search drew no applicants, it never landed a big grant, and it spent into a corner;
 its own memory reads <i>"COLLAPSE M39 unless a grant lands"</i>, the grant did not, and the
-lab went bankrupt at month 38, freezing Impact at <b>{R['outcome'].split()[-1]}</b> with no
+lab went bankrupt at month 38 (its budget trajectory, and every model's, is in Figure 5), freezing Impact at <b>{R['outcome'].split()[-1]}</b> with no
 going-concern projection. Identical strategy, opposite outcomes: the heavy tail is a
 high-commitment policy meeting the luck of the seed — and precisely why a single number, or a
 best-of-N run, misleads.</p>"""
