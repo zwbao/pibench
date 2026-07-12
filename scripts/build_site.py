@@ -521,6 +521,14 @@ python3 scripts/finalize.py --exp exp2</pre></div>
   url     = {%%GITHUB%%},
   version = {1.0.0}
 }</pre></div>
+    <details class="disc" style="margin-top:1.4rem"><summary>References</summary><div class="body">
+    <p style="font-size:.82rem;line-height:1.5">Backlund &amp; Petersson. Vending-Bench. arXiv:2502.15840, 2025. ·
+    Chen, Narasimhan &amp; Liu. CEO-Bench. arXiv:2606.18543, 2026. ·
+    Jimenez et al. SWE-bench. ICLR 2024. · Mialon et al. GAIA. ICLR 2024. ·
+    Mussa &amp; Rosen. Monopoly and Product Quality. J. Econ. Theory 1978. ·
+    Patwardhan et al. GDPval. arXiv:2510.04374, 2025. · Penrose AI. AccountingBench. 2025. ·
+    Trivedi et al. AppWorld. ACL 2024. · Yao et al. &tau;-bench. arXiv:2406.12045, 2025. ·
+    Zhou et al. WebArena. ICLR 2024.</p></div></details>
   </div>
 </section>
 

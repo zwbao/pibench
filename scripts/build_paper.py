@@ -658,6 +658,30 @@ with zero students; a one-month compute-spike exploit on paper quality; and an
 order-dependence in review outcomes that violated determinism. The hardened sandbox and the
 resulting invariant and penetration suites ship with the benchmark.</p>
 
+<h2 class="refs-h">References</h2>
+<ol class="refs">
+<li>A. Backlund and L. Petersson. Vending-Bench: A Benchmark for Long-Term Coherence of
+Autonomous Agents. <i>arXiv:2502.15840</i>, 2025.</li>
+<li>H. Chen, K. Narasimhan, and Z. Liu. CEO-Bench: Can Agents Play the Long Game?
+<i>arXiv:2606.18543</i>, 2026.</li>
+<li>C. E. Jimenez, J. Yang, A. Wettig, S. Yao, K. Pei, O. Press, and K. Narasimhan. SWE-bench:
+Can Language Models Resolve Real-World GitHub Issues? <i>ICLR</i>, 2024.</li>
+<li>G. Mialon, C. Fourrier, T. Wolf, Y. LeCun, and T. Scialom. GAIA: A Benchmark for General
+AI Assistants. <i>ICLR</i>, 2024.</li>
+<li>M. Mussa and S. Rosen. Monopoly and Product Quality. <i>Journal of Economic Theory</i>,
+18(2):301–317, 1978.</li>
+<li>T. Patwardhan, R. Dias, et al. GDPval: Evaluating AI Model Performance on Real-World
+Economically Valuable Tasks. <i>arXiv:2510.04374</i>, 2025.</li>
+<li>Penrose AI. AccountingBench: Evaluating LLMs on Real Long-Horizon Business Tasks. 2025.</li>
+<li>H. Trivedi, T. Khot, M. Hartmann, R. Manku, V. Dong, E. Li, S. Gupta, A. Sabharwal, and
+N. Balasubramanian. AppWorld: A Controllable World of Apps and People for Benchmarking
+Interactive Coding Agents. <i>ACL</i>, 2024.</li>
+<li>S. Yao, N. Shinn, P. Razavi, and K. Narasimhan. τ-bench: A Benchmark for Tool-Agent-User
+Interaction in Real-World Domains. <i>arXiv:2406.12045</i>, 2025.</li>
+<li>S. Zhou, F. F. Xu, H. Zhu, et al. WebArena: A Realistic Web Environment for Building
+Autonomous Agents. <i>ICLR</i>, 2024.</li>
+</ol>
+
 </article>
 
 <footer class="colophon">

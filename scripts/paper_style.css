@@ -158,3 +158,11 @@ figcaption b { color: var(--ink-soft); }
   .masthead { position: static; }
 }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
+
+/* references */
+.refs-h { font-family: var(--sans); font-weight: 750; font-size: 1.5rem;
+  letter-spacing: -0.02em; margin: 3rem 0 1rem; color: var(--ink); }
+ol.refs { max-width: var(--measure); margin: 0 auto; padding-left: 1.4rem;
+  font-family: var(--sans); font-size: 0.85rem; color: var(--ink-soft); line-height: 1.5; }
+ol.refs li { margin-bottom: 0.55rem; padding-left: 0.3rem; }
+ol.refs i { color: var(--muted); }
