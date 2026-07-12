@@ -75,6 +75,17 @@ if __name__ == "__main__":
     refs["model_list"] = [r["model"] for r in board]
     json.dump(refs, open(os.path.join(ROOT, "paper", "refs.json"), "w"), indent=2)
 
+    # deep variance analysis (replay-based) — writes variance.json + fig_variance.png
+    print("variance mechanism analysis...")
+    subprocess.run([sys.executable, os.path.join(ROOT, "scripts", "variance.py")],
+                   cwd=ROOT, check=True)
+    # note: variance_decomp.json, case_study.json, ablation_harness.json are produced by
+    # their own analysis steps (see scripts/); regenerate them if the run set changes.
+
+    print("deep analyses (variance decomposition, harness ablation)...")
+    subprocess.run([sys.executable, os.path.join(ROOT, "scripts", "deep_analysis.py")],
+                   cwd=ROOT, check=True)
+
     print("building paper...")
     subprocess.run([sys.executable, os.path.join(ROOT, "scripts", "build_paper.py")],
                    cwd=ROOT, check=True)
